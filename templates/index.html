@@ -4,208 +4,217 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDDIKTI Checker - BPK RI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        primary: { 50: '#f0f4ff', 100: '#dbe4ff', 200: '#bac8ff', 300: '#91a7ff', 400: '#748ffc', 500: '#5c7cfa', 600: '#4c6ef5', 700: '#4263eb', 800: '#3b5bdb', 900: '#364fc7' },
-                        accent: { 50: '#fff3e0', 100: '#ffe0b2', 200: '#ffcc80', 300: '#ffb74d', 400: '#ffa726', 500: '#ff9800', 600: '#fb8c00', 700: '#f57c00' },
-                        mint: { 50: '#e6fcf5', 100: '#c3fae8', 200: '#96f2d7', 300: '#63e6be', 400: '#38d9a9', 500: '#20c997' },
-                        coral: { 50: '#fff5f5', 100: '#ffe3e3', 200: '#ffc9c9', 300: '#ffa8a8', 400: '#ff8787', 500: '#ff6b6b' },
+                    fontFamily: {
+                        sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        mono: ['Geist Mono', 'ui-monospace', 'monospace'],
                     }
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .drop-zone.dragover { border-color: #4c6ef5; background: #f0f4ff; }
+        body { font-family: 'Geist', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+        .drop-zone.dragover { border-color: #171717; background: #f5f5f5; }
         #log-container { max-height: 320px; overflow-y: auto; }
         #log-container::-webkit-scrollbar { width: 6px; }
-        #log-container::-webkit-scrollbar-thumb { background: #bac8ff; border-radius: 3px; }
-        .fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-        .status-badge { display: inline-block; padding: 2px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
-        .gradient-bg { background: linear-gradient(135deg, #4c6ef5 0%, #7c3aed 50%, #f59e0b 100%); }
-        .gradient-text { background: linear-gradient(135deg, #4c6ef5, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .card { background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #f1f3f5; }
-        .btn-primary { background: linear-gradient(135deg, #4c6ef5, #7c3aed); transition: all 0.2s; }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(76,110,245,0.35); }
-        .btn-success { background: linear-gradient(135deg, #20c997, #12b886); transition: all 0.2s; }
-        .btn-success:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(32,201,151,0.35); }
-        .hero-pattern { background-image: radial-gradient(circle at 20% 50%, rgba(76,110,245,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(124,58,237,0.06) 0%, transparent 50%), radial-gradient(circle at 60% 80%, rgba(245,158,11,0.05) 0%, transparent 50%); }
+        #log-container::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 3px; }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .status-badge { display: inline-block; padding: 2px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .card { background: white; border-radius: 1rem; border: 1px solid #e5e5e5; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+        .btn-dark { background: #171717; color: #fff; transition: background .15s; }
+        .btn-dark:hover { background: #404040; }
+        .btn-dark:disabled { opacity: .5; }
+        .dot { width: 6px; height: 6px; border-radius: 9999px; display: inline-block; }
+        input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen hero-pattern">
+<body class="bg-neutral-50 min-h-screen text-neutral-900">
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+    <header class="bg-white/80 backdrop-blur-md border-b border-neutral-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-                <img src="/static/bpk-logo.png" alt="Logo BPK" class="w-12 h-12 object-contain">
+                <img src="/static/bpk-logo.png" alt="Logo BPK" class="w-11 h-11 object-contain">
                 <div>
-                    <h1 class="text-xl font-bold gradient-text">PDDIKTI Checker</h1>
-                    <p class="text-xs text-gray-400">Cek Status Kemahasiswaan Otomatis</p>
+                    <h1 class="text-lg font-semibold tracking-tight">PDDIKTI Checker</h1>
+                    <p class="text-xs text-neutral-500">Cek status kemahasiswaan otomatis</p>
                 </div>
             </div>
-            <a href="/template" class="hidden sm:flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 px-3 py-1.5 rounded-lg transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Download Template
-            </a>
+            <div class="flex items-center gap-2">
+                <span id="source" class="inline-flex items-center gap-1.5 text-xs text-neutral-500 border border-neutral-200 rounded-full px-2.5 py-1" title="">
+                    <span id="source-dot" class="dot bg-neutral-300"></span><span id="source-text">Memeriksa API...</span>
+                </span>
+                <a href="/template" class="hidden sm:flex items-center gap-1.5 text-sm font-medium text-neutral-700 hover:text-neutral-900 border border-neutral-200 hover:bg-neutral-100 px-3 py-1.5 rounded-lg transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Download template
+                </a>
+            </div>
         </div>
     </header>
 
     <main class="max-w-4xl mx-auto px-4 py-8 space-y-6">
         <!-- Hero / Branding -->
         <section class="text-center py-4 fade-in">
-            <div class="inline-flex items-center gap-2 bg-accent-50 text-accent-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
-                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                Tools BPK RI
-            </div>
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-1">PDDIKTI Checker</h2>
-            <p class="text-lg text-gray-500 mb-1">by <span class="font-bold gradient-text">Bashid Effendi</span></p>
-            <p class="text-sm text-gray-400 max-w-md mx-auto">Cari satu mahasiswa cepat, atau upload file Excel untuk cek massal di PDDIKTI Kemdiktisaintek</p>
+            <h2 class="text-3xl font-semibold tracking-tight mb-1">PDDIKTI Checker</h2>
+            <p class="text-lg text-neutral-500 mb-1">by <span class="font-semibold text-neutral-900">Bashid Effendi</span></p>
+            <p class="text-sm text-neutral-500 max-w-md mx-auto">Cari satu mahasiswa dengan cepat atau upload file Excel untuk pengecekan massal di PDDIKTI Kemdiktisaintek.</p>
         </section>
 
         <!-- Quick Search Section -->
         <section id="search-section" class="card p-6 fade-in">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-mint-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-4 h-4 text-mint-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <div class="w-8 h-8 bg-neutral-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-4 h-4 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </div>
-                    <h2 class="text-lg font-bold text-gray-800">Cari Cepat</h2>
+                    <h2 class="text-lg font-semibold">Cari Cepat</h2>
                 </div>
-                <span class="text-xs text-gray-400">Cari 1 mahasiswa</span>
+                <span class="text-xs text-neutral-400">Cari satu mahasiswa</span>
             </div>
-            <form id="search-form" class="flex gap-2">
-                <input type="text" id="search-input" placeholder="Ketik nama lengkap atau NIM..." class="flex-1 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-mint-400 outline-none" required>
-                <button type="submit" id="search-btn" class="bg-mint-500 hover:bg-mint-600 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-all">Cari</button>
+            <form id="search-form" class="flex gap-2" autocomplete="off">
+                <input type="search" id="search-input" placeholder="Ketik nama lengkap atau NIM" minlength="3" maxlength="100" class="flex-1 min-w-0 border border-neutral-300 rounded-xl px-4 py-2.5 text-sm focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 outline-none transition" required>
+                <button type="submit" id="search-btn" class="btn-dark font-semibold px-5 py-2.5 rounded-xl text-sm">Cari</button>
             </form>
             <div id="search-results" class="mt-3"></div>
         </section>
 
         <!-- Divider -->
         <div class="flex items-center gap-3 my-2">
-            <div class="flex-1 h-px bg-gray-200"></div>
-            <span class="text-xs text-gray-400 font-semibold">atau</span>
-            <div class="flex-1 h-px bg-gray-200"></div>
+            <div class="flex-1 h-px bg-neutral-200"></div>
+            <span class="text-xs text-neutral-400 font-medium">atau</span>
+            <div class="flex-1 h-px bg-neutral-200"></div>
         </div>
 
         <!-- Upload Section -->
         <section id="upload-section" class="card p-6 fade-in">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-gray-800">Upload File Excel</h2>
-                <a href="/template" class="sm:hidden flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700">
+                <h2 class="text-lg font-semibold">Upload File Excel</h2>
+                <a href="/template" class="sm:hidden flex items-center gap-1 text-xs font-medium text-neutral-700 hover:text-neutral-900">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     Template
                 </a>
             </div>
-            <div id="drop-zone" class="drop-zone border-2 border-dashed border-primary-200 rounded-2xl p-10 text-center cursor-pointer hover:border-primary-400 hover:bg-primary-50/50 transition-all">
-                <div class="w-16 h-16 mx-auto mb-4 bg-primary-100 rounded-2xl flex items-center justify-center">
-                    <svg class="w-8 h-8 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div id="drop-zone" class="drop-zone border border-dashed border-neutral-300 rounded-2xl p-10 text-center cursor-pointer hover:border-neutral-900 hover:bg-neutral-50 transition-all">
+                <div class="w-14 h-14 mx-auto mb-4 bg-neutral-100 rounded-2xl flex items-center justify-center">
+                    <svg class="w-7 h-7 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                     </svg>
                 </div>
-                <p class="text-gray-700 font-semibold">Drag & drop file Excel di sini</p>
-                <p class="text-sm text-gray-400 mt-1">atau klik untuk pilih file (.xlsx)</p>
+                <p class="font-medium">Drag & drop file Excel di sini</p>
+                <p class="text-sm text-neutral-500 mt-1">atau klik untuk memilih file (.xlsx)</p>
                 <input type="file" id="file-input" accept=".xlsx" class="hidden">
             </div>
             <!-- Format info -->
-            <div class="mt-4 p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                <p class="text-xs font-semibold text-amber-700 mb-1">Format kolom yang dibutuhkan:</p>
+            <div class="mt-4 p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
+                <p class="text-xs font-medium text-neutral-700 mb-1.5">Format kolom yang dibutuhkan:</p>
                 <div class="flex flex-wrap gap-2">
-                    <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md font-medium">NO</span>
-                    <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md font-medium">NIM</span>
-                    <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md font-medium">NAMA MAHASISWA</span>
-                    <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md font-medium">PERGURUAN TINGGI</span>
+                    <span class="text-xs font-mono bg-white border border-neutral-200 text-neutral-700 px-2 py-0.5 rounded-md">NO</span>
+                    <span class="text-xs font-mono bg-white border border-neutral-200 text-neutral-700 px-2 py-0.5 rounded-md">NIM</span>
+                    <span class="text-xs font-mono bg-white border border-neutral-200 text-neutral-700 px-2 py-0.5 rounded-md">NAMA MAHASISWA</span>
+                    <span class="text-xs font-mono bg-white border border-neutral-200 text-neutral-700 px-2 py-0.5 rounded-md">PERGURUAN TINGGI</span>
                 </div>
-                <p class="text-xs text-amber-600 mt-1.5">Belum punya file? <a href="/template" class="underline font-semibold hover:text-amber-800">Download template di sini</a></p>
+                <p class="text-xs text-neutral-500 mt-2">Belum punya file? <a href="/template" class="underline font-medium text-neutral-800 hover:text-neutral-900">Download template di sini</a>.</p>
             </div>
-            <div id="file-info" class="hidden mt-3 p-3 bg-primary-50 rounded-xl flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div id="file-info" class="hidden mt-3 p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between">
+                <div class="flex items-center gap-2 min-w-0">
+                    <div class="w-8 h-8 bg-white border border-neutral-200 rounded-lg flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <span id="file-name" class="text-sm font-semibold text-primary-800"></span>
+                    <span id="file-name" class="text-sm font-medium truncate"></span>
                 </div>
-                <button id="btn-remove" class="text-sm text-coral-500 hover:text-coral-600 font-medium">Hapus</button>
+                <button id="btn-remove" class="text-sm text-neutral-500 hover:text-neutral-900 font-medium underline underline-offset-2">Hapus</button>
             </div>
-            <button id="btn-upload" class="hidden mt-4 w-full btn-primary text-white font-bold py-3.5 px-6 rounded-xl text-base">
-                Mulai Proses
+            <p id="upload-warning" class="hidden mt-3 text-xs text-neutral-600">API sedang dibatasi.</p>
+            <button id="btn-upload" class="hidden mt-4 w-full btn-dark font-semibold py-3.5 px-6 rounded-xl text-base">
+                Mulai proses
             </button>
         </section>
 
         <!-- Progress Section -->
         <section id="progress-section" class="hidden card p-6 fade-in">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-gray-800">Proses Pengecekan</h2>
-                <span id="progress-status" class="status-badge bg-amber-100 text-amber-700">Memproses</span>
+                <h2 class="text-lg font-semibold">Proses Pengecekan</h2>
+                <span id="progress-status" class="status-badge bg-neutral-100 text-neutral-700">Memproses</span>
             </div>
             <div class="mb-4">
-                <div class="flex justify-between text-sm text-gray-500 mb-1.5">
-                    <span id="progress-text" class="font-medium">0 / 0</span>
-                    <span id="progress-percent" class="font-bold text-primary-600">0%</span>
+                <div class="flex justify-between text-sm text-neutral-500 mb-1.5">
+                    <span id="progress-text" class="font-mono">0 / 0</span>
+                    <span id="progress-percent" class="font-semibold text-neutral-900">0%</span>
                 </div>
-                <div class="w-full bg-gray-100 rounded-full h-3.5 overflow-hidden">
-                    <div id="progress-bar" class="h-3.5 rounded-full transition-all duration-300 bg-gradient-to-r from-primary-500 to-purple-500" style="width: 0%"></div>
+                <div class="w-full bg-neutral-100 rounded-full h-2 overflow-hidden">
+                    <div id="progress-bar" class="h-2 rounded-full transition-all duration-300 bg-neutral-900" style="width: 0%"></div>
                 </div>
             </div>
-            <div id="log-container" class="bg-gray-50 rounded-xl p-3 font-mono text-xs space-y-1 border border-gray-100">
-                <p class="text-gray-400">Menunggu data...</p>
+            <div id="log-container" class="bg-neutral-50 rounded-xl p-3 font-mono text-xs space-y-1 border border-neutral-200">
+                <p class="text-neutral-400">Menunggu data...</p>
             </div>
             <div id="download-section" class="hidden mt-4 fade-in">
-                <div id="summary-box" class="grid grid-cols-4 gap-3 mb-4"></div>
-                <a id="btn-download" href="#" class="block w-full text-center btn-success text-white font-bold py-3.5 px-6 rounded-xl text-base">
-                    Download Hasil (.xlsx)
+                <p id="abort-box" class="hidden mb-3 text-sm text-neutral-700"></p>
+                <div id="summary-box" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4"></div>
+                <a id="btn-download" href="#" class="block w-full text-center btn-dark font-semibold py-3.5 px-6 rounded-xl text-base">
+                    Download hasil (.xlsx)
                 </a>
-                <button id="btn-new" class="mt-2 w-full text-center border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50 text-gray-600 font-semibold py-3 px-6 rounded-xl transition-all">
-                    Proses File Lain
+                <button id="btn-new" class="mt-2 w-full text-center border border-neutral-300 hover:border-neutral-900 hover:bg-neutral-50 text-neutral-700 font-medium py-3 px-6 rounded-xl transition-all">
+                    Proses file lain
                 </button>
             </div>
         </section>
 
         <!-- History Section -->
         <section class="card p-6">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">Riwayat Proses</h2>
+            <h2 class="text-lg font-semibold mb-4">Riwayat Proses</h2>
             <div id="history-container">
-                <p class="text-gray-400 text-sm text-center py-4">Memuat riwayat...</p>
+                <p class="text-neutral-400 text-sm text-center py-4">Memuat riwayat...</p>
             </div>
         </section>
     </main>
 
     <footer class="text-center py-8 space-y-1">
-        <p class="text-sm font-semibold text-gray-500">PDDIKTI Checker <span class="gradient-text">by Bashid Effendi</span></p>
-        <p class="text-xs text-gray-400">Data dari PDDIKTI Kemdiktisaintek (data publik)</p>
+        <p class="text-sm font-medium text-neutral-500">PDDIKTI Checker <span class="text-neutral-900">by Bashid Effendi</span></p>
+        <p class="text-xs text-neutral-400">Data dari PDDIKTI Kemdiktisaintek (data publik)</p>
     </footer>
 
     <script>
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const fileInfo = document.getElementById('file-info');
-        const fileName = document.getElementById('file-name');
-        const btnUpload = document.getElementById('btn-upload');
-        const btnRemove = document.getElementById('btn-remove');
-        const uploadSection = document.getElementById('upload-section');
-        const progressSection = document.getElementById('progress-section');
-        const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
-        const progressPercent = document.getElementById('progress-percent');
-        const progressStatus = document.getElementById('progress-status');
-        const logContainer = document.getElementById('log-container');
-        const downloadSection = document.getElementById('download-section');
-        const btnDownload = document.getElementById('btn-download');
-        const btnNew = document.getElementById('btn-new');
-        const summaryBox = document.getElementById('summary-box');
-        const historyContainer = document.getElementById('history-container');
+        const OFFICIAL = {{ official_site | tojson }};
+        const $ = (id) => document.getElementById(id);
+        function esc(s) { return s == null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+        const mnt = (sec) => Math.max(1, Math.round((sec || 0) / 60));
 
+        // ============================================================
+        // STATUS API
+        // ============================================================
+        let sourceDown = false;
+        function setSource(ok, info) {
+            sourceDown = !ok;
+            $('source-dot').className = 'dot ' + (ok ? 'bg-neutral-900' : 'border border-neutral-900');
+            $('source-text').textContent = ok ? 'API aktif' : 'API dibatasi';
+            $('source').className = 'inline-flex items-center gap-1.5 text-xs border rounded-full px-2.5 py-1 ' +
+                (ok ? 'text-neutral-500 border-neutral-200' : 'text-neutral-900 border-neutral-400');
+            $('source').title = ok ? '' : ((info && (info.reason || info.error)) || '');
+            $('upload-warning').classList.toggle('hidden', !(sourceDown && selectedFile));
+        }
+        fetch('/status').then(r => r.json()).then(d => setSource(d.ok, d)).catch(() => setSource(false));
+
+        // ============================================================
+        // UPLOAD
+        // ============================================================
+        const dropZone = $('drop-zone'), fileInput = $('file-input'), fileInfo = $('file-info');
+        const btnUpload = $('btn-upload'), uploadSection = $('upload-section'), progressSection = $('progress-section');
+        const progressBar = $('progress-bar'), progressText = $('progress-text'), progressPercent = $('progress-percent');
+        const progressStatus = $('progress-status'), logContainer = $('log-container'), downloadSection = $('download-section');
+        const summaryBox = $('summary-box'), historyContainer = $('history-container');
         let selectedFile = null;
 
-        // Drag & Drop
         dropZone.addEventListener('click', () => fileInput.click());
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
@@ -217,188 +226,186 @@
         fileInput.addEventListener('change', () => { if (fileInput.files.length) selectFile(fileInput.files[0]); });
 
         function selectFile(file) {
-            if (!file.name.toLowerCase().endsWith('.xlsx')) {
-                alert('File harus berformat .xlsx');
-                return;
-            }
+            if (!file.name.toLowerCase().endsWith('.xlsx')) { alert('File harus berformat .xlsx.'); return; }
             selectedFile = file;
-            fileName.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            $('file-name').textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
             fileInfo.classList.remove('hidden');
             btnUpload.classList.remove('hidden');
+            $('upload-warning').classList.toggle('hidden', !sourceDown);
         }
 
-        btnRemove.addEventListener('click', () => {
+        function resetUpload() {
             selectedFile = null;
             fileInput.value = '';
             fileInfo.classList.add('hidden');
             btnUpload.classList.add('hidden');
-        });
+            $('upload-warning').classList.add('hidden');
+        }
+        $('btn-remove').addEventListener('click', resetUpload);
 
-        // Upload
         btnUpload.addEventListener('click', async () => {
             if (!selectedFile) return;
             btnUpload.disabled = true;
             btnUpload.textContent = 'Mengupload...';
-
             const formData = new FormData();
             formData.append('file', selectedFile);
-
             try {
                 const resp = await fetch('/upload', { method: 'POST', body: formData });
-                const data = await resp.json();
-                if (data.error) { alert(data.error); return; }
-                startProgress(data.job_id);
+                const data = await resp.json().catch(() => ({}));
+                if (!resp.ok || data.error) { alert(data.error || 'Upload gagal.'); return; }
+                startProgress(data.job_id, selectedFile.name);
             } catch (err) {
-                alert('Gagal upload: ' + err.message);
+                alert('Upload gagal. Periksa koneksi, lalu coba lagi.');
             } finally {
                 btnUpload.disabled = false;
-                btnUpload.textContent = 'Mulai Proses';
+                btnUpload.textContent = 'Mulai proses';
             }
         });
 
-        // SSE Progress
-        function startProgress(jobId) {
+        // ============================================================
+        // PROGRESS (polling)
+        // ============================================================
+        function logColor(s) {
+            if (s.startsWith('Gagal cek') || s.startsWith('Tidak ditemukan')) return 'text-neutral-900 font-medium';
+            if (s === 'Mencari...' || s.startsWith('Dilewati') || s.startsWith('Duplikat')) return 'text-neutral-400';
+            return 'text-neutral-600';
+        }
+        function addLog(text, cls) {
+            const el = document.createElement('p');
+            el.className = cls;
+            el.textContent = text;
+            logContainer.appendChild(el);
+        }
+        function setBadge(text, dark) {
+            progressStatus.textContent = text;
+            progressStatus.className = 'status-badge ' + (dark ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-700');
+        }
+
+        function startProgress(jobId, filename) {
             uploadSection.classList.add('hidden');
             progressSection.classList.remove('hidden');
             downloadSection.classList.add('hidden');
             logContainer.innerHTML = '';
+            progressBar.style.width = '0%';
+            progressPercent.textContent = '0%';
+            setBadge('Memproses', false);
+            let since = 0, failures = 0;
 
-            const evtSource = new EventSource(`/progress/${jobId}`);
-
-            evtSource.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-
-                if (data.error && !data.status) {
-                    evtSource.close();
-                    progressStatus.textContent = 'Error';
-                    progressStatus.className = 'status-badge bg-red-100 text-red-700';
-                    logContainer.innerHTML += `<p class="text-red-500">Error: ${data.error}</p>`;
-                    return;
-                }
-
-                if (data.total > 0) {
-                    const pct = Math.round((data.current / data.total) * 100);
-                    progressBar.style.width = pct + '%';
-                    progressText.textContent = `${data.current} / ${data.total}`;
-                    progressPercent.textContent = pct + '%';
-                }
-
-                if (data.logs) {
-                    data.logs.forEach(log => {
-                        const color = log.status.includes('CACHED') ? 'text-primary-500' :
-                                      log.status.includes('Ditemukan') ? 'text-mint-500' :
-                                      log.status.includes('Tidak ditemukan') ? 'text-coral-500' :
-                                      log.status.includes('tidak cocok') ? 'text-amber-500' :
-                                      'text-gray-500';
-                        const el = document.createElement('p');
-                        el.className = color;
-                        el.textContent = `[${log.index}/${log.total}] ${log.nama} — ${log.status}`;
-                        logContainer.appendChild(el);
+            const tick = async () => {
+                try {
+                    const resp = await fetch(`/progress/${jobId}?since=${since}`);
+                    const data = await resp.json();
+                    if (!resp.ok) return finishError(data.error || 'Proses tidak ditemukan.');
+                    failures = 0;
+                    since = data.seq || since;
+                    if (data.total > 0) {
+                        const pct = Math.round((data.current / data.total) * 100);
+                        progressBar.style.width = pct + '%';
+                        progressText.textContent = `${data.current} / ${data.total}`;
+                        progressPercent.textContent = pct + '%';
+                    }
+                    (data.logs || []).forEach(log => {
+                        if (log.status === 'Mencari...') return;
+                        addLog(`[${log.index}/${log.total}] ${log.nama} — ${log.status}`, logColor(log.status));
                     });
-                    logContainer.scrollTop = logContainer.scrollHeight;
-                }
-
-                if (data.status === 'done') {
-                    evtSource.close();
-                    progressStatus.textContent = 'Selesai';
-                    progressStatus.className = 'status-badge bg-mint-100 text-green-700';
-                    progressBar.style.width = '100%';
-                    progressPercent.textContent = '100%';
-
-                    const s = data.summary;
-                    summaryBox.innerHTML = `
-                        <div class="bg-primary-50 rounded-xl p-3 text-center">
-                            <p class="text-2xl font-extrabold text-primary-700">${s.total}</p>
-                            <p class="text-xs text-primary-400 font-medium">Total</p>
-                        </div>
-                        <div class="bg-mint-50 rounded-xl p-3 text-center">
-                            <p class="text-2xl font-extrabold text-green-600">${s.found}</p>
-                            <p class="text-xs text-green-400 font-medium">Ditemukan</p>
-                        </div>
-                        <div class="bg-coral-50 rounded-xl p-3 text-center">
-                            <p class="text-2xl font-extrabold text-coral-500">${s.not_found}</p>
-                            <p class="text-xs text-coral-300 font-medium">Tidak Ditemukan</p>
-                        </div>
-                        <div class="bg-amber-50 rounded-xl p-3 text-center">
-                            <p class="text-2xl font-extrabold text-amber-600">${s.no_match}</p>
-                            <p class="text-xs text-amber-400 font-medium">Tidak Cocok</p>
-                        </div>
-                    `;
-
-                    btnDownload.href = `/download/${jobId}`;
-                    downloadSection.classList.remove('hidden');
-                    // Save to localStorage history
-                    saveHistory(jobId, selectedFile ? selectedFile.name : 'file.xlsx', s);
-                    loadHistory();
-                }
-
-                if (data.status === 'error') {
-                    evtSource.close();
-                    progressStatus.textContent = 'Error';
-                    progressStatus.className = 'status-badge bg-red-100 text-red-700';
-                    logContainer.innerHTML += `<p class="text-red-500">Error: ${data.error}</p>`;
+                    if (data.logs && data.logs.length) logContainer.scrollTop = logContainer.scrollHeight;
+                    if (data.status === 'done') return finishDone(jobId, filename, data.summary);
+                    if (data.status === 'error') return finishError(data.error);
+                    setTimeout(tick, 1000);
+                } catch {
+                    if (++failures > 8) return finishError('Koneksi ke server terputus.');
+                    setTimeout(tick, 2000);
                 }
             };
-
-            evtSource.onerror = () => { evtSource.close(); };
+            tick();
         }
 
-        btnNew.addEventListener('click', () => {
-            selectedFile = null;
-            fileInput.value = '';
-            fileInfo.classList.add('hidden');
-            btnUpload.classList.add('hidden');
+        function finishError(msg) {
+            setBadge('Gagal', true);
+            addLog('Gagal: ' + msg, 'text-neutral-900 font-medium');
+        }
+
+        function finishDone(jobId, filename, s) {
+            if (!s.aborted) {
+                progressBar.style.width = '100%';
+                progressPercent.textContent = '100%';
+            }
+            setBadge(s.aborted ? 'Berhenti' : 'Selesai', true);
+            const abortBox = $('abort-box');
+            if (s.aborted) {
+                setSource(false, { reason: s.aborted });
+                abortBox.textContent = `Proses berhenti karena API dibatasi. Sebanyak ${s.unchecked} baris belum dicek.`;
+                abortBox.classList.remove('hidden');
+            } else {
+                abortBox.classList.add('hidden');
+            }
+            const box = (v, k) => `<div class="bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-center">
+                <p class="text-2xl font-semibold tracking-tight">${v ?? 0}</p>
+                <p class="text-xs text-neutral-500">${k}</p></div>`;
+            summaryBox.innerHTML = box(s.total, 'Total') + box(s.found, 'Ditemukan') +
+                box(s.not_found, 'Tidak ditemukan') + box(s.no_match, 'Tidak cocok');
+            $('btn-download').href = `/download/${jobId}`;
+            downloadSection.classList.remove('hidden');
+            saveHistory(jobId, filename, s);
+            loadHistory();
+        }
+
+        $('btn-new').addEventListener('click', () => {
+            resetUpload();
             progressSection.classList.add('hidden');
             uploadSection.classList.remove('hidden');
         });
 
-        // History (localStorage per-user)
-        function saveHistory(jobId, filename, summary) {
-            const history = JSON.parse(localStorage.getItem('pddikti_history') || '[]');
-            history.unshift({
-                job_id: jobId,
-                filename: filename,
-                date: new Date().toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-                total: summary.total,
-                found: summary.found,
-                not_found: summary.not_found,
-            });
-            // Keep last 20
-            localStorage.setItem('pddikti_history', JSON.stringify(history.slice(0, 20)));
+        // ============================================================
+        // HISTORY (localStorage per-user)
+        // ============================================================
+        function readHistory() {
+            try { const v = JSON.parse(localStorage.getItem('pddikti_history') || '[]'); return Array.isArray(v) ? v : []; }
+            catch { return []; }
         }
-
+        function saveHistory(jobId, filename, summary) {
+            try {
+                const history = readHistory();
+                history.unshift({
+                    job_id: jobId,
+                    filename: filename,
+                    date: new Date().toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                    total: summary.total,
+                    found: summary.found,
+                    not_found: summary.not_found,
+                });
+                localStorage.setItem('pddikti_history', JSON.stringify(history.slice(0, 20)));
+            } catch {}
+        }
         function loadHistory() {
-            const data = JSON.parse(localStorage.getItem('pddikti_history') || '[]');
+            const data = readHistory();
             if (!data.length) {
-                historyContainer.innerHTML = '<p class="text-gray-400 text-sm text-center py-6">Belum ada riwayat proses</p>';
+                historyContainer.innerHTML = '<p class="text-neutral-400 text-sm text-center py-6">Belum ada riwayat proses.</p>';
                 return;
             }
             historyContainer.innerHTML = `
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
-                            <tr class="border-b border-gray-100 text-left text-gray-400 text-xs uppercase tracking-wider">
-                                <th class="py-2.5 pr-4">File</th>
-                                <th class="py-2.5 pr-4">Tanggal</th>
-                                <th class="py-2.5 pr-4 text-center">Total</th>
-                                <th class="py-2.5 pr-4 text-center">Ditemukan</th>
-                                <th class="py-2.5 pr-4 text-center">Tidak</th>
+                            <tr class="border-b border-neutral-200 text-left text-neutral-400 text-xs uppercase tracking-wider">
+                                <th class="py-2.5 pr-4 font-medium">File</th>
+                                <th class="py-2.5 pr-4 font-medium">Tanggal</th>
+                                <th class="py-2.5 pr-4 font-medium text-center">Total</th>
+                                <th class="py-2.5 pr-4 font-medium text-center">Ditemukan</th>
+                                <th class="py-2.5 pr-4 font-medium text-center">Tidak ditemukan</th>
                                 <th class="py-2.5"></th>
                             </tr>
                         </thead>
                         <tbody>
                             ${data.map(h => `
-                                <tr class="border-b border-gray-50 hover:bg-primary-50/30 transition-colors">
-                                    <td class="py-3 pr-4 font-semibold text-gray-700 max-w-[200px] truncate">${h.filename}</td>
-                                    <td class="py-3 pr-4 text-gray-400">${h.date}</td>
-                                    <td class="py-3 pr-4 text-center font-bold text-gray-600">${h.total}</td>
-                                    <td class="py-3 pr-4 text-center font-bold text-green-500">${h.found}</td>
-                                    <td class="py-3 pr-4 text-center font-bold text-coral-500">${h.not_found}</td>
+                                <tr class="border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
+                                    <td class="py-3 pr-4 font-medium max-w-[200px] truncate">${esc(h.filename)}</td>
+                                    <td class="py-3 pr-4 text-neutral-400 whitespace-nowrap">${esc(h.date)}</td>
+                                    <td class="py-3 pr-4 text-center font-mono">${esc(h.total)}</td>
+                                    <td class="py-3 pr-4 text-center font-mono">${esc(h.found)}</td>
+                                    <td class="py-3 pr-4 text-center font-mono">${esc(h.not_found)}</td>
                                     <td class="py-3 text-right">
-                                        <a href="/download/${h.job_id}" class="inline-flex items-center gap-1 text-primary-600 hover:text-primary-700 font-semibold text-xs bg-primary-50 hover:bg-primary-100 px-2.5 py-1 rounded-lg transition-all">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3"/></svg>
-                                            Download
-                                        </a>
+                                        <a href="/download/${encodeURIComponent(h.job_id)}" class="inline-flex items-center gap-1 text-neutral-700 hover:text-neutral-900 font-medium text-xs border border-neutral-200 hover:bg-neutral-100 px-2.5 py-1 rounded-lg transition-all">Download</a>
                                     </td>
                                 </tr>
                             `).join('')}
@@ -407,134 +414,154 @@
                 </div>
             `;
         }
-
         loadHistory();
 
         // ============================================================
         // QUICK SEARCH
         // ============================================================
-        const searchForm = document.getElementById('search-form');
-        const searchInput = document.getElementById('search-input');
-        const searchBtn = document.getElementById('search-btn');
-        const searchResults = document.getElementById('search-results');
+        const searchForm = $('search-form'), searchInput = $('search-input');
+        const searchBtn = $('search-btn'), searchResults = $('search-results');
+        let lastResults = [];
 
         searchForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const q = searchInput.value.trim();
-            if (!q) return;
-
+            if (q.length < 3) return;
             searchBtn.disabled = true;
             searchBtn.textContent = 'Mencari...';
-            searchResults.innerHTML = '<div class="text-center py-6"><div class="inline-block w-6 h-6 border-4 border-mint-200 border-t-mint-500 rounded-full animate-spin"></div><p class="text-xs text-gray-400 mt-2">Mencari di PDDIKTI...</p></div>';
-
+            searchResults.innerHTML = '<div class="text-center py-6"><div class="inline-block w-5 h-5 border-2 border-neutral-200 border-t-neutral-900 rounded-full animate-spin"></div><p class="text-xs text-neutral-400 mt-2">Mencari di PDDIKTI...</p></div>';
             try {
                 const resp = await fetch(`/search?q=${encodeURIComponent(q)}`);
-                const data = await resp.json();
-                if (data.error) {
-                    searchResults.innerHTML = `<p class="text-sm text-red-500 text-center py-4">${data.error}</p>`;
+                const data = await resp.json().catch(() => ({}));
+                if (data.code === 'SOURCE_UNAVAILABLE') {
+                    setSource(false, data);
+                    const wait = data.retry_after ? ` Coba lagi dalam ±${mnt(data.retry_after)} menit.` : '';
+                    searchResults.innerHTML = `<div class="text-center py-5 fade-in">
+                        <p class="text-sm font-medium">API PDDIKTI sedang dibatasi.${esc(wait)}</p>
+                        <p class="text-xs text-neutral-500 mt-1">Hasil belum bisa dipastikan.</p>
+                        <div class="flex justify-center gap-2 mt-3">
+                            <button type="button" data-retry class="btn-dark text-xs font-medium px-3 py-1.5 rounded-lg">Coba lagi</button>
+                            <a href="${esc(data.manual_url || OFFICIAL)}" target="_blank" rel="noopener" class="text-xs font-medium border border-neutral-300 hover:bg-neutral-100 px-3 py-1.5 rounded-lg">Cek manual ↗</a>
+                        </div></div>`;
                     return;
                 }
-                renderSearchResults(data.results || []);
+                if (!resp.ok || data.error) {
+                    searchResults.innerHTML = `<p class="text-sm text-neutral-900 text-center py-4">${esc(data.error || 'Pencarian gagal.')}</p>`;
+                    return;
+                }
+                setSource(true);
+                renderSearchResults(data);
             } catch (err) {
-                searchResults.innerHTML = `<p class="text-sm text-red-500 text-center py-4">Gagal: ${err.message}</p>`;
+                searchResults.innerHTML = '<p class="text-sm text-neutral-900 text-center py-4">Gagal terhubung ke server.</p>';
             } finally {
                 searchBtn.disabled = false;
                 searchBtn.textContent = 'Cari';
             }
         });
 
-        function renderSearchResults(results) {
+        searchResults.addEventListener('click', (e) => {
+            if (e.target.closest('[data-retry]')) { searchForm.requestSubmit(); return; }
+            const b = e.target.closest('[data-i]');
+            if (b) showDetail(lastResults[+b.dataset.i]);
+        });
+
+        function renderSearchResults(data) {
+            const results = data.results || [];
+            lastResults = results;
             if (!results.length) {
-                searchResults.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">Tidak ditemukan di PDDIKTI</p>';
+                searchResults.innerHTML = '<p class="text-sm text-neutral-400 text-center py-4">Tidak ditemukan di PDDIKTI.</p>';
                 return;
             }
-            let html = `<div class="overflow-x-auto rounded-xl border border-gray-100"><table class="w-full text-sm">
-                <thead><tr class="bg-gray-50 text-gray-400 text-xs uppercase tracking-wider">
-                    <th class="py-2.5 px-3 text-left">Nama</th>
-                    <th class="py-2.5 px-3 text-left">NIM</th>
-                    <th class="py-2.5 px-3 text-left">Perguruan Tinggi</th>
-                    <th class="py-2.5 px-3 text-left">Prodi</th>
+            let html = `<div class="overflow-x-auto rounded-xl border border-neutral-200 fade-in"><table class="w-full text-sm">
+                <thead><tr class="bg-neutral-50 text-neutral-400 text-xs uppercase tracking-wider">
+                    <th class="py-2.5 px-3 text-left font-medium">Nama</th>
+                    <th class="py-2.5 px-3 text-left font-medium">NIM</th>
+                    <th class="py-2.5 px-3 text-left font-medium">Perguruan tinggi</th>
+                    <th class="py-2.5 px-3 text-left font-medium">Prodi</th>
                     <th class="py-2.5 px-3"></th>
                 </tr></thead><tbody>`;
-            results.forEach(r => {
-                html += `<tr class="border-b border-gray-50 hover:bg-mint-50/30">
-                    <td class="py-2.5 px-3 font-semibold text-gray-700">${esc(r.nama||'-')}</td>
-                    <td class="py-2.5 px-3 text-gray-500 font-mono text-xs">${esc(r.nim||'-')}</td>
-                    <td class="py-2.5 px-3 text-gray-600 text-xs max-w-[200px]">${esc(r.nama_pt||'-')}</td>
-                    <td class="py-2.5 px-3 text-gray-500 text-xs max-w-[180px]">${esc(r.nama_prodi||r.prodi||'-')}</td>
-                    <td class="py-2.5 px-3 text-right"><button onclick="showDetail('${esc(r.id)}')" class="text-xs font-semibold text-mint-600 hover:text-mint-700 bg-mint-50 hover:bg-mint-100 px-2.5 py-1 rounded-lg">Detail</button></td>
+            results.forEach((r, i) => {
+                html += `<tr class="border-t border-neutral-100 hover:bg-neutral-50">
+                    <td class="py-2.5 px-3 font-medium">${esc(r.nama || '-')}</td>
+                    <td class="py-2.5 px-3 text-neutral-500 font-mono text-xs">${esc(r.nim || '-')}</td>
+                    <td class="py-2.5 px-3 text-neutral-600 text-xs max-w-[200px]">${esc(r.nama_pt || '-')}</td>
+                    <td class="py-2.5 px-3 text-neutral-500 text-xs max-w-[180px]">${esc(r.nama_prodi || '-')}</td>
+                    <td class="py-2.5 px-3 text-right"><button type="button" data-i="${i}" class="text-xs font-medium border border-neutral-200 hover:border-neutral-900 hover:bg-neutral-100 px-2.5 py-1 rounded-lg">Detail</button></td>
                 </tr>`;
             });
+            const more = data.total > results.length ? ` (${results.length} teratas ditampilkan)` : '';
             html += `</tbody></table></div>
-                <p class="text-xs text-gray-400 mt-2">${results.length} hasil${results.length>=20?' (ditampilkan 20 teratas)':''}</p>`;
+                <p class="text-xs text-neutral-400 mt-2">${data.total} hasil${more}</p>`;
             searchResults.innerHTML = html;
         }
 
-        async function showDetail(id) {
-            if (!id) return;
-            // Show modal/panel
-            const existing = document.getElementById('detail-modal');
-            if (existing) existing.remove();
+        // ============================================================
+        // DETAIL MODAL
+        // ============================================================
+        function closeModal() { const m = $('detail-modal'); if (m) m.remove(); }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        const closeBtn = '<button type="button" data-close class="mt-4 w-full border border-neutral-300 hover:bg-neutral-100 font-medium py-2.5 rounded-xl text-sm">Tutup</button>';
 
+        async function showDetail(r) {
+            if (!r || !r.id) return;
+            closeModal();
             const modal = document.createElement('div');
             modal.id = 'detail-modal';
             modal.className = 'fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 fade-in';
-            modal.innerHTML = `<div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl">
+            modal.innerHTML = `<div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-neutral-200">
                 <div class="text-center py-6">
-                    <div class="inline-block w-8 h-8 border-4 border-mint-200 border-t-mint-500 rounded-full animate-spin"></div>
-                    <p class="text-sm text-gray-400 mt-2">Memuat detail...</p>
-                </div>
-            </div>`;
-            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+                    <div class="inline-block w-6 h-6 border-2 border-neutral-200 border-t-neutral-900 rounded-full animate-spin"></div>
+                    <p class="text-sm text-neutral-400 mt-2">Memuat detail...</p>
+                </div></div>`;
+            modal.addEventListener('click', (e) => { if (e.target === modal || e.target.closest('[data-close]')) closeModal(); });
             document.body.appendChild(modal);
+            const panel = modal.firstElementChild;
 
             try {
-                const resp = await fetch(`/detail?id=${encodeURIComponent(id)}`);
-                const d = await resp.json();
-                if (d.error) {
-                    modal.firstElementChild.innerHTML = `<p class="text-sm text-red-500 text-center py-4">${d.error}</p><button onclick="document.getElementById('detail-modal').remove()" class="mt-2 w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold py-2 rounded-lg text-sm">Tutup</button>`;
+                const resp = await fetch(`/detail?id=${encodeURIComponent(r.id)}`);
+                const d = await resp.json().catch(() => ({}));
+                if (!resp.ok || d.error) {
+                    if (d.code === 'SOURCE_UNAVAILABLE') setSource(false, d);
+                    panel.innerHTML = `<p class="text-sm text-center py-4">${esc(d.code === 'SOURCE_UNAVAILABLE' ? 'API PDDIKTI sedang dibatasi.' : (d.error || 'Detail tidak ditemukan.'))}</p>${closeBtn}`;
                     return;
                 }
-                const statusColor = (d.status_saat_ini||'').toLowerCase().includes('aktif') ? 'bg-mint-100 text-mint-700' :
-                                   (d.status_saat_ini||'').toLowerCase().includes('lulus') ? 'bg-primary-100 text-primary-700' :
-                                   'bg-coral-100 text-coral-500';
-                modal.firstElementChild.innerHTML = `
+                const st = (d.status_saat_ini || '').toLowerCase();
+                const badge = st.includes('aktif') && !st.includes('non') ? 'bg-neutral-900 text-white' : 'border border-neutral-900 text-neutral-900';
+                const jk = d.jenis_kelamin === 'L' ? 'Laki-laki' : d.jenis_kelamin === 'P' ? 'Perempuan' : d.jenis_kelamin;
+                panel.innerHTML = `
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-extrabold text-gray-800">Detail Mahasiswa</h3>
-                        <button onclick="document.getElementById('detail-modal').remove()" class="text-gray-400 hover:text-gray-600">
+                        <h3 class="text-lg font-semibold">Detail Mahasiswa</h3>
+                        <button type="button" data-close class="text-neutral-400 hover:text-neutral-900" aria-label="Tutup">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
                     <div class="space-y-2 text-sm">
                         <div class="flex items-center gap-2 mb-3">
-                            <span class="text-xs font-bold px-3 py-1 rounded-full ${statusColor}">${esc(d.status_saat_ini||'-')}</span>
-                            <span class="text-xs text-gray-400">${esc(d.jenjang||'')}</span>
+                            <span class="text-xs font-semibold px-3 py-1 rounded-full ${badge}">${esc(d.status_saat_ini || '-')}</span>
+                            <span class="text-xs text-neutral-400">${esc(d.jenjang || '')}</span>
                         </div>
                         ${detailRow('Nama', d.nama)}
                         ${detailRow('NIM', d.nim)}
-                        ${detailRow('Jenis Kelamin', d.jenis_kelamin)}
-                        ${detailRow('Perguruan Tinggi', d.nama_pt)}
-                        ${detailRow('Program Studi', d.prodi)}
+                        ${detailRow('Jenis kelamin', jk)}
+                        ${detailRow('Perguruan tinggi', d.nama_pt)}
+                        ${detailRow('Program studi', d.prodi)}
                         ${detailRow('Jenjang', d.jenjang)}
-                        ${detailRow('Tahun Masuk', d.tahun_masuk)}
-                        ${detailRow('Semester Awal', d.semester_awal)}
+                        ${detailRow('Tahun masuk', d.tahun_masuk)}
+                        ${detailRow('Semester awal', d.semester_awal)}
                     </div>
-                    <button onclick="document.getElementById('detail-modal').remove()" class="mt-4 w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold py-2.5 rounded-xl text-sm">Tutup</button>
-                `;
+                    ${closeBtn}`;
             } catch (err) {
-                modal.firstElementChild.innerHTML = `<p class="text-sm text-red-500 text-center py-4">Gagal: ${err.message}</p><button onclick="document.getElementById('detail-modal').remove()" class="mt-2 w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold py-2 rounded-lg text-sm">Tutup</button>`;
+                panel.innerHTML = `<p class="text-sm text-center py-4">Gagal terhubung ke server.</p>${closeBtn}`;
             }
         }
 
         function detailRow(label, value) {
             if (!value) return '';
-            return `<div class="flex justify-between py-1.5 border-b border-gray-50">
-                <span class="text-gray-400 text-xs">${esc(label)}</span>
-                <span class="text-gray-700 font-medium text-xs text-right max-w-[60%]">${esc(String(value))}</span>
+            return `<div class="flex justify-between gap-4 py-1.5 border-b border-neutral-100">
+                <span class="text-neutral-400 text-xs">${esc(label)}</span>
+                <span class="font-medium text-xs text-right max-w-[60%]">${esc(String(value))}</span>
             </div>`;
         }
-
-        function esc(s) { return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
     </script>
 </body>
 </html>

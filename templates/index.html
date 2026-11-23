@@ -39,23 +39,26 @@ button, input { font: inherit; color: inherit; }
 .hidden { display: none !important; }
 .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
-.page { max-width: 720px; margin: 0 auto; padding: 72px 24px 56px; }
+.page { max-width: 720px; margin: 0 auto; padding: 40px 24px 56px; }
 
-/* Judul */
+/* Panel atas */
+.hero { padding: 34px 34px 0; background: #111110; color: #fff; border-radius: 22px; box-shadow: 0 28px 60px -32px rgba(0,0,0,.5); }
 .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
-.top h1 { margin: 0; font-size: 34px; font-weight: 600; letter-spacing: -.03em; line-height: 1.05; }
-.top p { margin: 6px 0 0; font-size: 15px; color: var(--muted); }
-.top p b { font-weight: 500; color: var(--ink); }
-.status {
-  display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px;
-  background: var(--card); border: 1px solid var(--line); border-radius: 99px;
-  font-size: 12.5px; color: var(--ink-2); white-space: nowrap; box-shadow: 0 1px 2px rgba(20,20,10,.04);
-}
-.status i { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); }
-.status.ok i { background: #1f9d55; box-shadow: 0 0 0 3px var(--green-bg); }
-.status.down { color: var(--amber); border-color: var(--amber-line); }
-.status.down i { background: #d98a0b; box-shadow: 0 0 0 3px var(--amber-bg); }
-.lead { margin: 22px 0 0; max-width: 540px; color: var(--ink-2); font-size: 15.5px; }
+.top h1 { margin: 0; font-size: 36px; font-weight: 600; letter-spacing: -.035em; line-height: 1.05; }
+.top p { margin: 6px 0 0; font-size: 15px; color: #a3a39c; }
+.top p b { font-weight: 500; color: #fff; }
+.status { display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; border: 1px solid rgba(255,255,255,.14); border-radius: 99px; font-size: 12.5px; color: #e7e7e2; white-space: nowrap; }
+.status i { width: 7px; height: 7px; border-radius: 50%; background: #6b6b66; }
+.status.ok i { background: #34c06b; box-shadow: 0 0 0 3px rgba(52,192,107,.18); }
+.status.down { color: #f3c169; border-color: rgba(243,193,105,.35); }
+.status.down i { background: #f0a92e; box-shadow: 0 0 0 3px rgba(240,169,46,.18); }
+.lead { margin: 18px 0 24px; max-width: 500px; color: #b9b9b2; font-size: 15px; }
+.hstats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 28px; border-top: 1px solid rgba(255,255,255,.1); }
+.hstats div { min-width: 0; padding: 18px 0 24px 22px; border-left: 1px solid rgba(255,255,255,.1); }
+.hstats div:first-child { padding-left: 0; border-left: 0; }
+.hstats b { display: block; font-size: 26px; font-weight: 600; letter-spacing: -.025em; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.hstats span { font-size: 12.5px; color: #a3a39c; white-space: nowrap; }
+.hstats .g b { color: #5fd18b; }
 
 /* Kartu */
 .card { margin-top: 16px; padding: 24px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
@@ -78,10 +81,13 @@ button, input { font: inherit; color: inherit; }
 .textlink { all: unset; cursor: pointer; font-size: 13px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
 .textlink:hover { color: var(--red); }
 
-.search { display: flex; gap: 8px; }
-.search input { flex: 1; min-width: 0; height: 46px; padding: 0 16px; border: 1px solid var(--line-2); border-radius: 11px; outline: none; background: var(--card); transition: border-color .15s, box-shadow .15s; }
+.search { display: flex; gap: 8px; align-items: center; padding: 6px 6px 6px 18px; background: #fff; border-radius: 14px; transition: box-shadow .15s; }
+.search:focus-within { box-shadow: 0 0 0 4px rgba(255,255,255,.18); }
+.search input { flex: 1; min-width: 0; height: 44px; border: 0; outline: none; background: transparent; color: var(--ink); font-size: 15px; }
+.search input:focus-visible { outline: none; }
 .search input::placeholder { color: var(--faint); }
-.search input:focus { border-color: var(--ink); box-shadow: 0 0 0 4px rgba(11,11,10,.06); }
+.search .btn { height: 44px; border-radius: 10px; }
+#search-results > :first-child { margin-top: 0; }
 .search input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
 /* Pesan */
@@ -186,9 +192,15 @@ footer { margin-top: 40px; text-align: center; font-size: 12.5px; color: var(--f
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 
 @media (max-width: 600px) {
-  .page { padding: 40px 14px 40px; }
+  .page { padding: 14px 12px 40px; }
+  .hero { padding: 24px 20px 0; border-radius: 18px; }
   .top { flex-direction: column; gap: 14px; }
   .top h1 { font-size: 28px; }
+  .search { padding-left: 14px; }
+  .search .btn { padding: 0 16px; }
+  .hstats div { padding: 14px 0 18px 12px; }
+  .hstats b { font-size: 20px; }
+  .hstats span { font-size: 11.5px; }
   .card { padding: 18px; border-radius: 14px; }
   .card.first { margin-top: 28px; }
   .rhead { display: none; }
@@ -211,25 +223,32 @@ footer { margin-top: 40px; text-align: center; font-size: 12.5px; color: var(--f
 <body>
 <main class="page">
 
-  <div class="top">
-    <div>
-      <h1>PDDIKTI Checker</h1>
-      <p>by <b>Bashid Effendi</b></p>
+  <!-- Panel atas + Cari Cepat -->
+  <header class="hero">
+    <div class="top">
+      <div>
+        <h1>PDDIKTI Checker</h1>
+        <p>by <b>Bashid Effendi</b></p>
+      </div>
+      <span id="source" class="status" title=""><i></i><span id="source-text">Memeriksa API...</span></span>
     </div>
-    <span id="source" class="status" title=""><i></i><span id="source-text">Memeriksa API...</span></span>
-  </div>
-  <p class="lead">Cari satu mahasiswa dengan cepat atau upload file Excel untuk pengecekan massal di PDDIKTI Kemdiktisaintek.</p>
-
-  <!-- Cari Cepat -->
-  <section class="card first">
-    <div class="card-head">
-      <h2>Cari Cepat</h2>
-      <span>Cari satu mahasiswa</span>
-    </div>
+    <p class="lead">Cari satu mahasiswa dengan cepat atau upload file Excel untuk pengecekan massal di PDDIKTI Kemdiktisaintek.</p>
     <form id="search-form" class="search" autocomplete="off">
       <input type="search" id="search-input" placeholder="Ketik nama lengkap atau NIM" minlength="3" maxlength="100" aria-label="Nama lengkap atau NIM" required>
       <button type="submit" id="search-btn" class="btn">Cari</button>
     </form>
+    <div class="hstats">
+      <div><b id="st-files">0</b><span>File dicek</span></div>
+      <div><b id="st-rows">0</b><span>Mahasiswa dicek</span></div>
+      <div class="g"><b id="st-found">0</b><span>Ditemukan</span></div>
+    </div>
+  </header>
+
+  <!-- Hasil Cari Cepat -->
+  <section id="results-card" class="card hidden" aria-live="polite">
+    <div class="card-head">
+      <h2>Hasil Pencarian</h2>
+    </div>
     <div id="search-results"></div>
   </section>
 
@@ -328,6 +347,7 @@ searchForm.addEventListener('submit', async (e) => {
   if (q.length < 3) return;
   searchBtn.disabled = true;
   searchBtn.textContent = 'Mencari...';
+  $('results-card').classList.remove('hidden');
   searchResults.innerHTML = '<div class="note"><span class="spinner"></span><br>Mencari di PDDIKTI...</div>';
   try {
     const resp = await fetch(`/search?q=${encodeURIComponent(q)}`);
@@ -588,14 +608,25 @@ function saveHistory(jobId, filename, summary) {
       filename: filename,
       date: new Date().toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
       total: summary.total,
+      checked: summary.total - (summary.skipped || 0) - (summary.unchecked || 0),
       found: summary.found,
       not_found: summary.not_found,
     });
     localStorage.setItem('pddikti_history', JSON.stringify(history.slice(0, 20)));
   } catch {}
 }
+// Angka di panel atas, dihitung dari riwayat di browser ini.
+function renderStats(data) {
+  const fmt = (n) => (Number(n) || 0).toLocaleString('id-ID');
+  const sum = (f) => data.reduce((a, h) => a + (Number(f(h)) || 0), 0);
+  $('st-files').textContent = fmt(data.length);
+  $('st-rows').textContent = fmt(sum(h => h.checked ?? h.total));
+  $('st-found').textContent = fmt(sum(h => h.found));
+}
+
 function loadHistory() {
   const data = readHistory();
+  renderStats(data);
   if (!data.length) {
     historyContainer.innerHTML = '<p class="empty">Belum ada riwayat proses.</p>';
     return;

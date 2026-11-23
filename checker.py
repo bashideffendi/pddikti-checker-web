@@ -432,6 +432,27 @@ NEW_COLUMNS = ["STATUS MAHASISWA (PDDIKTI)", "PT (PDDIKTI)", "PRODI (PDDIKTI)",
                "NIM (PDDIKTI)", "JENJANG", "KETERANGAN"]
 
 
+STATUS_COLORS = {            # (warna huruf, warna isi)
+    "green": ("12723B", "EBF6EF"),
+    "blue": ("1C5BC4", "EDF3FD"),
+    "amber": ("9A5A06", "FCF5E6"),
+    "red": ("B42318", "FDF0EF"),
+}
+
+
+def _status_tone(value):
+    s = cell_text(value).lower()
+    if not s:
+        return None
+    if "aktif" in s and "non" not in s:
+        return "green"
+    if "lulus" in s:
+        return "blue"
+    if "cuti" in s:
+        return "amber"
+    return "red"
+
+
 def format_excel(filepath):
     wb = load_workbook(filepath)
     ws = wb.active
@@ -488,6 +509,14 @@ def format_excel(filepath):
                 cell.fill = row_color
             elif is_odd:
                 cell.fill = stripe_fill
+
+        # Kolom status diberi warna sendiri: aktif hijau, lulus biru, cuti kuning, lainnya merah.
+        status_cell = ws.cell(row=row_idx, column=new_col_start)
+        tone = _status_tone(status_cell.value)
+        if tone:
+            font_color, fill_color = STATUS_COLORS[tone]
+            status_cell.font = Font(size=10, name="Arial", bold=True, color=font_color)
+            status_cell.fill = PatternFill(start_color=fill_color, end_color=fill_color, fill_type="solid")
 
     for col_idx in range(1, new_col_start):
         header_val = str(ws.cell(row=1, column=col_idx).value or "")

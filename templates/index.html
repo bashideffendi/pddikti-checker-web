@@ -1,567 +1,617 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDDIKTI Checker - BPK RI</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Instrument Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-                        mono: ['Geist Mono', 'ui-monospace', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-        .drop-zone.dragover { border-color: #171717; background: #f5f5f5; }
-        #log-container { max-height: 320px; overflow-y: auto; }
-        #log-container::-webkit-scrollbar { width: 6px; }
-        #log-container::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 3px; }
-        .fade-in { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .status-badge { display: inline-block; padding: 2px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
-        .card { background: white; border-radius: 1rem; border: 1px solid #e5e5e5; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
-        .btn-dark { background: #171717; color: #fff; transition: background .15s; }
-        .btn-dark:hover { background: #404040; }
-        .btn-dark:disabled { opacity: .5; }
-        .dot { width: 6px; height: 6px; border-radius: 9999px; display: inline-block; }
-        input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDDIKTI Checker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0a'/%3E%3Ctext x='16' y='22.5' font-family='Arial' font-weight='700' font-size='17' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f6f3;
+  --card: #ffffff;
+  --ink: #0b0b0a;
+  --ink-2: #3d3d39;
+  --muted: #73736d;
+  --faint: #a5a59f;
+  --line: #e9e9e4;
+  --line-2: #d5d5cf;
+  --soft: #f8f8f5;
+
+  --green: #12723b;  --green-bg: #ebf6ef;  --green-line: #c3e3cf;
+  --red: #b42318;    --red-bg: #fdf0ef;    --red-line: #f3cbc7;
+  --amber: #9a5a06;  --amber-bg: #fcf5e6;  --amber-line: #efd9a8;
+  --blue: #1c5bc4;   --blue-bg: #edf3fd;   --blue-line: #c6d8f4;
+  --gray: #55554f;   --gray-bg: #f1f1ed;   --gray-line: #dcdcd6;
+
+  --sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, Consolas, monospace;
+  --shadow: 0 1px 2px rgba(20, 20, 10, .04), 0 10px 28px -18px rgba(20, 20, 10, .14);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.hidden { display: none !important; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+.page { max-width: 720px; margin: 0 auto; padding: 72px 24px 56px; }
+
+/* Judul */
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.top h1 { margin: 0; font-size: 34px; font-weight: 600; letter-spacing: -.03em; line-height: 1.05; }
+.top p { margin: 6px 0 0; font-size: 15px; color: var(--muted); }
+.top p b { font-weight: 500; color: var(--ink); }
+.status {
+  display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 99px;
+  font-size: 12.5px; color: var(--ink-2); white-space: nowrap; box-shadow: 0 1px 2px rgba(20,20,10,.04);
+}
+.status i { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); }
+.status.ok i { background: #1f9d55; box-shadow: 0 0 0 3px var(--green-bg); }
+.status.down { color: var(--amber); border-color: var(--amber-line); }
+.status.down i { background: #d98a0b; box-shadow: 0 0 0 3px var(--amber-bg); }
+.lead { margin: 22px 0 0; max-width: 540px; color: var(--ink-2); font-size: 15.5px; }
+
+/* Kartu */
+.card { margin-top: 16px; padding: 24px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+.card.first { margin-top: 36px; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+.card-head h2 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
+.card-head span, .card-head a { font-size: 13px; color: var(--muted); }
+.card-head a { text-underline-offset: 3px; }
+.card-head a:hover { color: var(--ink); }
+
+/* Tombol & input */
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 46px; padding: 0 22px; border: 1px solid var(--ink); border-radius: 11px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; transition: background .15s, border-color .15s, transform .1s; white-space: nowrap; }
+.btn:hover { background: #2a2a27; border-color: #2a2a27; }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .5; cursor: progress; }
+.btn.line { background: var(--card); color: var(--ink); border-color: var(--line-2); }
+.btn.line:hover { border-color: var(--ink); background: var(--soft); }
+.btn.sm { height: 34px; padding: 0 14px; font-size: 13px; border-radius: 9px; }
+.btn.full { width: 100%; }
+.textlink { all: unset; cursor: pointer; font-size: 13px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.textlink:hover { color: var(--red); }
+
+.search { display: flex; gap: 8px; }
+.search input { flex: 1; min-width: 0; height: 46px; padding: 0 16px; border: 1px solid var(--line-2); border-radius: 11px; outline: none; background: var(--card); transition: border-color .15s, box-shadow .15s; }
+.search input::placeholder { color: var(--faint); }
+.search input:focus { border-color: var(--ink); box-shadow: 0 0 0 4px rgba(11,11,10,.06); }
+.search input::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+/* Pesan */
+.note { padding: 22px 0 2px; text-align: center; font-size: 14px; color: var(--muted); }
+.notice { margin-top: 16px; padding: 16px 18px; border-radius: 12px; font-size: 14px; }
+.notice strong { display: block; font-weight: 600; }
+.notice p { margin: 2px 0 0; }
+.notice .actions { display: flex; gap: 8px; margin-top: 12px; }
+.notice.amber { background: var(--amber-bg); border: 1px solid var(--amber-line); color: var(--amber); }
+.notice.red { background: var(--red-bg); border: 1px solid var(--red-line); color: var(--red); }
+.spinner { display: inline-block; width: 16px; height: 16px; margin-bottom: 8px; border: 2px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Hasil */
+.results { margin-top: 18px; }
+.rhead, .rrow { display: grid; grid-template-columns: 1.4fr 1fr 1.5fr 1.1fr 20px; gap: 14px; align-items: center; }
+.rhead { padding: 0 10px 8px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.rrow { width: 100%; padding: 13px 10px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: none; text-align: left; font-size: 14px; cursor: pointer; transition: background .12s; }
+.rrow:hover { background: var(--soft); }
+.rrow .nm { font-weight: 500; }
+.rrow .nim { font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
+.rrow .pt, .rrow .pr { font-size: 13px; color: var(--muted); }
+.rrow .go { color: var(--faint); text-align: right; transition: transform .15s, color .15s; }
+.rrow:hover .go { color: var(--ink); transform: translateX(2px); }
+.rcount { margin: 10px 0 0; font-size: 12.5px; color: var(--muted); }
+
+/* Upload */
+.drop { padding: 38px 20px; border: 1.5px dashed var(--line-2); border-radius: 13px; background: var(--soft); text-align: center; cursor: pointer; transition: border-color .15s, background .15s; }
+.drop:hover, .drop.over { border-color: var(--ink); background: #f2f2ee; }
+.drop p { margin: 0; font-weight: 500; }
+.drop small { display: block; margin-top: 4px; font-size: 13px; color: var(--muted); }
+.cols { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.cols code { font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); background: var(--soft); border: 1px solid var(--line); padding: 2px 7px; border-radius: 6px; }
+.file { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--soft); }
+.file span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 500; }
+.warn { margin: 12px 0 0; font-size: 13px; color: var(--amber); }
+
+/* Badge status */
+.badge { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 99px; font-size: 12px; font-weight: 500; border: 1px solid; }
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.badge.green { color: var(--green); background: var(--green-bg); border-color: var(--green-line); }
+.badge.red { color: var(--red); background: var(--red-bg); border-color: var(--red-line); }
+.badge.amber { color: var(--amber); background: var(--amber-bg); border-color: var(--amber-line); }
+.badge.blue { color: var(--blue); background: var(--blue-bg); border-color: var(--blue-line); }
+.badge.gray { color: var(--gray); background: var(--gray-bg); border-color: var(--gray-line); }
+
+/* Proses */
+.prog { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; font-size: 13px; color: var(--muted); }
+.prog b { font-size: 24px; font-weight: 600; letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.track { height: 4px; background: var(--gray-bg); border-radius: 4px; overflow: hidden; }
+.track div { height: 100%; width: 0; background: var(--ink); border-radius: 4px; transition: width .4s ease; }
+.log { margin-top: 16px; max-height: 260px; overflow-y: auto; padding: 12px 14px; background: var(--soft); border: 1px solid var(--line); border-radius: 11px; font: 12px/1.8 var(--mono); color: var(--ink-2); }
+.log p { margin: 0; }
+.log .green { color: var(--green); }
+.log .red { color: var(--red); }
+.log .amber { color: var(--amber); }
+.log .dim { color: var(--faint); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
+.stats div { padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.stats b { display: block; font-size: 24px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.stats div { min-width: 0; }
+.stats span { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stats span i { width: 6px; height: 6px; border-radius: 50%; }
+.stats .green b { color: var(--green); } .stats .green i { background: var(--green); }
+.stats .red b { color: var(--red); } .stats .red i { background: var(--red); }
+.stats .amber b { color: var(--amber); } .stats .amber i { background: var(--amber); }
+.stats .gray i { background: var(--faint); }
+.stats span i { flex: none; }
+.actions-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
+
+/* Riwayat */
+.hist { width: 100%; border-collapse: collapse; font-size: 14px; }
+.hist th { padding: 0 12px 8px 0; border-bottom: 1px solid var(--line); text-align: left; font-size: 12px; font-weight: 400; color: var(--muted); }
+.hist td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--line); }
+.hist tr:last-child td { border-bottom: 0; }
+.hist .r { text-align: right; padding-right: 0; }
+.hist .n { font-family: var(--mono); font-size: 13px; text-align: right; }
+.hist .n.green { color: var(--green); } .hist .n.red { color: var(--red); }
+.hist .f { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.hist .d { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.hist a { font-size: 13px; font-weight: 500; text-underline-offset: 3px; }
+.empty { margin: 0; font-size: 14px; color: var(--muted); }
+
+footer { margin-top: 40px; text-align: center; font-size: 12.5px; color: var(--faint); }
+
+/* Detail */
+.modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(15,15,10,.38); backdrop-filter: blur(3px); animation: fade .15s ease-out; }
+.panel { width: 100%; max-width: 470px; max-height: calc(100vh - 32px); overflow-y: auto; padding: 26px; background: var(--card); border-radius: 18px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.35); animation: rise .2s ease-out; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.panel-head h3 { margin: 0; font-size: 17px; font-weight: 600; }
+.x { all: unset; cursor: pointer; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; color: var(--muted); font-size: 19px; }
+.x:hover { background: var(--soft); color: var(--ink); }
+.who { margin: 4px 0 14px; }
+.who b { display: block; font-size: 20px; font-weight: 600; letter-spacing: -.02em; line-height: 1.25; }
+.who span { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.dl { margin: 16px 0 0; border-top: 1px solid var(--line); }
+.dl div { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.dl dt { color: var(--muted); }
+.dl dd { margin: 0; font-weight: 500; text-align: right; }
+@keyframes fade { from { opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px) scale(.99); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+@media (max-width: 600px) {
+  .page { padding: 40px 14px 40px; }
+  .top { flex-direction: column; gap: 14px; }
+  .top h1 { font-size: 28px; }
+  .card { padding: 18px; border-radius: 14px; }
+  .card.first { margin-top: 28px; }
+  .rhead { display: none; }
+  .rrow { grid-template-columns: 1fr 16px; gap: 2px 10px; padding: 12px 4px; }
+  .rrow .nm, .rrow .nim, .rrow .pt, .rrow .pr { grid-column: 1; }
+  .rrow .go { grid-column: 2; grid-row: 1 / span 4; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .actions-2 { grid-template-columns: 1fr; }
+  .hist thead { display: none; }
+  .hist tr { display: grid; grid-template-columns: 1fr auto; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .hist tr:last-child { border-bottom: 0; }
+  .hist td { padding: 0; border: 0; }
+  .hist .f { max-width: none; }
+  .hist .n { display: none; }
+  .hist .d { grid-column: 1; }
+  .hist .r { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+}
+</style>
 </head>
-<body class="bg-neutral-50 min-h-screen text-neutral-900">
-    <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-md border-b border-neutral-200 sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <img src="/static/bpk-logo.png" alt="Logo BPK" class="w-11 h-11 object-contain">
-                <div>
-                    <h1 class="text-lg font-semibold tracking-tight">PDDIKTI Checker</h1>
-                    <p class="text-xs text-neutral-500">Cek status kemahasiswaan otomatis</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <span id="source" class="inline-flex items-center gap-1.5 text-xs text-neutral-500 border border-neutral-200 rounded-full px-2.5 py-1" title="">
-                    <span id="source-dot" class="dot bg-neutral-300"></span><span id="source-text">Memeriksa API...</span>
-                </span>
-                <a href="/template" class="hidden sm:flex items-center gap-1.5 text-sm font-medium text-neutral-700 hover:text-neutral-900 border border-neutral-200 hover:bg-neutral-100 px-3 py-1.5 rounded-lg transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    Download template
-                </a>
-            </div>
-        </div>
-    </header>
+<body>
+<main class="page">
 
-    <main class="max-w-4xl mx-auto px-4 py-8 space-y-6">
-        <!-- Hero / Branding -->
-        <section class="text-center py-4 fade-in">
-            <h2 class="text-3xl font-semibold tracking-tight mb-1">PDDIKTI Checker</h2>
-            <p class="text-lg text-neutral-500 mb-1">by <span class="font-semibold text-neutral-900">Bashid Effendi</span></p>
-            <p class="text-sm text-neutral-500 max-w-md mx-auto">Cari satu mahasiswa dengan cepat atau upload file Excel untuk pengecekan massal di PDDIKTI Kemdiktisaintek.</p>
-        </section>
+  <div class="top">
+    <div>
+      <h1>PDDIKTI Checker</h1>
+      <p>by <b>Bashid Effendi</b></p>
+    </div>
+    <span id="source" class="status" title=""><i></i><span id="source-text">Memeriksa API...</span></span>
+  </div>
+  <p class="lead">Cari satu mahasiswa dengan cepat atau upload file Excel untuk pengecekan massal di PDDIKTI Kemdiktisaintek.</p>
 
-        <!-- Quick Search Section -->
-        <section id="search-section" class="card p-6 fade-in">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-neutral-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-4 h-4 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    </div>
-                    <h2 class="text-lg font-semibold">Cari Cepat</h2>
-                </div>
-                <span class="text-xs text-neutral-400">Cari satu mahasiswa</span>
-            </div>
-            <form id="search-form" class="flex gap-2" autocomplete="off">
-                <input type="search" id="search-input" placeholder="Ketik nama lengkap atau NIM" minlength="3" maxlength="100" class="flex-1 min-w-0 border border-neutral-300 rounded-xl px-4 py-2.5 text-sm focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 outline-none transition" required>
-                <button type="submit" id="search-btn" class="btn-dark font-semibold px-5 py-2.5 rounded-xl text-sm">Cari</button>
-            </form>
-            <div id="search-results" class="mt-3"></div>
-        </section>
+  <!-- Cari Cepat -->
+  <section class="card first">
+    <div class="card-head">
+      <h2>Cari Cepat</h2>
+      <span>Cari satu mahasiswa</span>
+    </div>
+    <form id="search-form" class="search" autocomplete="off">
+      <input type="search" id="search-input" placeholder="Ketik nama lengkap atau NIM" minlength="3" maxlength="100" aria-label="Nama lengkap atau NIM" required>
+      <button type="submit" id="search-btn" class="btn">Cari</button>
+    </form>
+    <div id="search-results"></div>
+  </section>
 
-        <!-- Divider -->
-        <div class="flex items-center gap-3 my-2">
-            <div class="flex-1 h-px bg-neutral-200"></div>
-            <span class="text-xs text-neutral-400 font-medium">atau</span>
-            <div class="flex-1 h-px bg-neutral-200"></div>
-        </div>
+  <!-- Upload File Excel -->
+  <section id="upload-section" class="card">
+    <div class="card-head">
+      <h2>Upload File Excel</h2>
+      <a href="/template">Download template</a>
+    </div>
+    <div id="drop-zone" class="drop" role="button" tabindex="0">
+      <p>Drag &amp; drop file Excel di sini</p>
+      <small>atau klik untuk memilih file (.xlsx)</small>
+      <input type="file" id="file-input" accept=".xlsx" class="hidden">
+    </div>
+    <div class="cols">
+      <span>Format kolom yang dibutuhkan:</span>
+      <code>NO</code><code>NIM</code><code>NAMA MAHASISWA</code><code>PERGURUAN TINGGI</code>
+    </div>
+    <div id="file-info" class="file hidden">
+      <span id="file-name"></span>
+      <button type="button" id="btn-remove" class="textlink">Hapus</button>
+    </div>
+    <p id="upload-warning" class="warn hidden">API sedang dibatasi.</p>
+    <button type="button" id="btn-upload" class="btn full hidden" style="margin-top:16px">Mulai proses</button>
+  </section>
 
-        <!-- Upload Section -->
-        <section id="upload-section" class="card p-6 fade-in">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold">Upload File Excel</h2>
-                <a href="/template" class="sm:hidden flex items-center gap-1 text-xs font-medium text-neutral-700 hover:text-neutral-900">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    Template
-                </a>
-            </div>
-            <div id="drop-zone" class="drop-zone border border-dashed border-neutral-300 rounded-2xl p-10 text-center cursor-pointer hover:border-neutral-900 hover:bg-neutral-50 transition-all">
-                <div class="w-14 h-14 mx-auto mb-4 bg-neutral-100 rounded-2xl flex items-center justify-center">
-                    <svg class="w-7 h-7 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                    </svg>
-                </div>
-                <p class="font-medium">Drag & drop file Excel di sini</p>
-                <p class="text-sm text-neutral-500 mt-1">atau klik untuk memilih file (.xlsx)</p>
-                <input type="file" id="file-input" accept=".xlsx" class="hidden">
-            </div>
-            <!-- Format info -->
-            <div class="mt-4 p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
-                <p class="text-xs font-medium text-neutral-700 mb-1.5">Format kolom yang dibutuhkan:</p>
-                <div class="flex flex-wrap gap-2">
-                    <span class="text-xs font-mono bg-white border border-neutral-200 text-neutral-700 px-2 py-0.5 rounded-md">NO</span>
-                    <span class="text-xs font-mono bg-white border border-neutral-200 text-neutral-700 px-2 py-0.5 rounded-md">NIM</span>
-                    <span class="text-xs font-mono bg-white border border-neutral-200 text-neutral-700 px-2 py-0.5 rounded-md">NAMA MAHASISWA</span>
-                    <span class="text-xs font-mono bg-white border border-neutral-200 text-neutral-700 px-2 py-0.5 rounded-md">PERGURUAN TINGGI</span>
-                </div>
-                <p class="text-xs text-neutral-500 mt-2">Belum punya file? <a href="/template" class="underline font-medium text-neutral-800 hover:text-neutral-900">Download template di sini</a>.</p>
-            </div>
-            <div id="file-info" class="hidden mt-3 p-3 bg-neutral-50 border border-neutral-200 rounded-xl flex items-center justify-between">
-                <div class="flex items-center gap-2 min-w-0">
-                    <div class="w-8 h-8 bg-white border border-neutral-200 rounded-lg flex items-center justify-center shrink-0">
-                        <svg class="w-4 h-4 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                    </div>
-                    <span id="file-name" class="text-sm font-medium truncate"></span>
-                </div>
-                <button id="btn-remove" class="text-sm text-neutral-500 hover:text-neutral-900 font-medium underline underline-offset-2">Hapus</button>
-            </div>
-            <p id="upload-warning" class="hidden mt-3 text-xs text-neutral-600">API sedang dibatasi.</p>
-            <button id="btn-upload" class="hidden mt-4 w-full btn-dark font-semibold py-3.5 px-6 rounded-xl text-base">
-                Mulai proses
-            </button>
-        </section>
+  <!-- Proses Pengecekan -->
+  <section id="progress-section" class="card hidden">
+    <div class="card-head">
+      <h2>Proses Pengecekan</h2>
+      <span id="progress-status" class="badge gray">Memproses</span>
+    </div>
+    <div class="prog">
+      <span id="progress-text" class="mono">0 / 0</span>
+      <b id="progress-percent">0%</b>
+    </div>
+    <div class="track"><div id="progress-bar"></div></div>
+    <div id="log-container" class="log"><p class="dim">Menunggu data...</p></div>
+    <div id="download-section" class="hidden">
+      <div id="abort-box" class="notice amber hidden"></div>
+      <div id="summary-box" class="stats"></div>
+      <div class="actions-2">
+        <a id="btn-download" href="#" class="btn">Download hasil (.xlsx)</a>
+        <button type="button" id="btn-new" class="btn line">Proses file lain</button>
+      </div>
+    </div>
+  </section>
 
-        <!-- Progress Section -->
-        <section id="progress-section" class="hidden card p-6 fade-in">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold">Proses Pengecekan</h2>
-                <span id="progress-status" class="status-badge bg-neutral-100 text-neutral-700">Memproses</span>
-            </div>
-            <div class="mb-4">
-                <div class="flex justify-between text-sm text-neutral-500 mb-1.5">
-                    <span id="progress-text" class="font-mono">0 / 0</span>
-                    <span id="progress-percent" class="font-semibold text-neutral-900">0%</span>
-                </div>
-                <div class="w-full bg-neutral-100 rounded-full h-2 overflow-hidden">
-                    <div id="progress-bar" class="h-2 rounded-full transition-all duration-300 bg-neutral-900" style="width: 0%"></div>
-                </div>
-            </div>
-            <div id="log-container" class="bg-neutral-50 rounded-xl p-3 font-mono text-xs space-y-1 border border-neutral-200">
-                <p class="text-neutral-400">Menunggu data...</p>
-            </div>
-            <div id="download-section" class="hidden mt-4 fade-in">
-                <p id="abort-box" class="hidden mb-3 text-sm text-neutral-700"></p>
-                <div id="summary-box" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4"></div>
-                <a id="btn-download" href="#" class="block w-full text-center btn-dark font-semibold py-3.5 px-6 rounded-xl text-base">
-                    Download hasil (.xlsx)
-                </a>
-                <button id="btn-new" class="mt-2 w-full text-center border border-neutral-300 hover:border-neutral-900 hover:bg-neutral-50 text-neutral-700 font-medium py-3 px-6 rounded-xl transition-all">
-                    Proses file lain
-                </button>
-            </div>
-        </section>
+  <!-- Riwayat Proses -->
+  <section class="card">
+    <div class="card-head">
+      <h2>Riwayat Proses</h2>
+    </div>
+    <div id="history-container"><p class="empty">Memuat riwayat...</p></div>
+  </section>
 
-        <!-- History Section -->
-        <section class="card p-6">
-            <h2 class="text-lg font-semibold mb-4">Riwayat Proses</h2>
-            <div id="history-container">
-                <p class="text-neutral-400 text-sm text-center py-4">Memuat riwayat...</p>
-            </div>
-        </section>
-    </main>
+  <footer>Data dari PDDIKTI Kemdiktisaintek (data publik)</footer>
+</main>
 
-    <footer class="text-center py-8 space-y-1">
-        <p class="text-sm font-medium text-neutral-500">PDDIKTI Checker <span class="text-neutral-900">by Bashid Effendi</span></p>
-        <p class="text-xs text-neutral-400">Data dari PDDIKTI Kemdiktisaintek (data publik)</p>
-    </footer>
+<script>
+const OFFICIAL = {{ official_site | tojson }};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => s == null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const mnt = (sec) => Math.max(1, Math.round((sec || 0) / 60));
+let selectedFile = null;
+let sourceDown = false;
 
-    <script>
-        const OFFICIAL = {{ official_site | tojson }};
-        const $ = (id) => document.getElementById(id);
-        function esc(s) { return s == null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-        const mnt = (sec) => Math.max(1, Math.round((sec || 0) / 60));
+// Warna status mahasiswa: aktif hijau, lulus biru, cuti kuning, kosong abu-abu, lainnya merah.
+function statusTone(status) {
+  const s = (status || '').toLowerCase().trim();
+  if (!s || s === '-') return 'gray';
+  if (s.includes('aktif') && !s.includes('non')) return 'green';
+  if (s.includes('lulus')) return 'blue';
+  if (s.includes('cuti')) return 'amber';
+  return 'red';
+}
 
-        // ============================================================
-        // STATUS API
-        // ============================================================
-        let sourceDown = false;
-        function setSource(ok, info) {
-            sourceDown = !ok;
-            $('source-dot').className = 'dot ' + (ok ? 'bg-neutral-900' : 'border border-neutral-900');
-            $('source-text').textContent = ok ? 'API aktif' : 'API dibatasi';
-            $('source').className = 'inline-flex items-center gap-1.5 text-xs border rounded-full px-2.5 py-1 ' +
-                (ok ? 'text-neutral-500 border-neutral-200' : 'text-neutral-900 border-neutral-400');
-            $('source').title = ok ? '' : ((info && (info.reason || info.error)) || '');
-            $('upload-warning').classList.toggle('hidden', !(sourceDown && selectedFile));
-        }
-        fetch('/status').then(r => r.json()).then(d => setSource(d.ok, d)).catch(() => setSource(false));
+// ---------- Status API ----------
+function setSource(ok, info) {
+  sourceDown = !ok;
+  $('source').className = 'status ' + (ok ? 'ok' : 'down');
+  $('source-text').textContent = ok ? 'API aktif' : 'API dibatasi';
+  $('source').title = ok ? '' : ((info && (info.reason || info.error)) || '');
+  $('upload-warning').classList.toggle('hidden', !(sourceDown && selectedFile));
+}
+fetch('/status').then(r => r.json()).then(d => setSource(d.ok, d)).catch(() => setSource(false));
 
-        // ============================================================
-        // UPLOAD
-        // ============================================================
-        const dropZone = $('drop-zone'), fileInput = $('file-input'), fileInfo = $('file-info');
-        const btnUpload = $('btn-upload'), uploadSection = $('upload-section'), progressSection = $('progress-section');
-        const progressBar = $('progress-bar'), progressText = $('progress-text'), progressPercent = $('progress-percent');
-        const progressStatus = $('progress-status'), logContainer = $('log-container'), downloadSection = $('download-section');
-        const summaryBox = $('summary-box'), historyContainer = $('history-container');
-        let selectedFile = null;
+// ---------- Cari Cepat ----------
+const searchForm = $('search-form'), searchInput = $('search-input');
+const searchBtn = $('search-btn'), searchResults = $('search-results');
+let lastResults = [];
 
-        dropZone.addEventListener('click', () => fileInput.click());
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            if (e.dataTransfer.files.length) selectFile(e.dataTransfer.files[0]);
-        });
-        fileInput.addEventListener('change', () => { if (fileInput.files.length) selectFile(fileInput.files[0]); });
+searchForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const q = searchInput.value.trim();
+  if (q.length < 3) return;
+  searchBtn.disabled = true;
+  searchBtn.textContent = 'Mencari...';
+  searchResults.innerHTML = '<div class="note"><span class="spinner"></span><br>Mencari di PDDIKTI...</div>';
+  try {
+    const resp = await fetch(`/search?q=${encodeURIComponent(q)}`);
+    const data = await resp.json().catch(() => ({}));
+    if (data.code === 'SOURCE_UNAVAILABLE') {
+      setSource(false, data);
+      const wait = data.retry_after ? ` Coba lagi dalam ±${mnt(data.retry_after)} menit.` : '';
+      searchResults.innerHTML = `<div class="notice amber">
+        <strong>API PDDIKTI sedang dibatasi.${esc(wait)}</strong>
+        <p>Hasil belum bisa dipastikan.</p>
+        <div class="actions">
+          <button type="button" data-retry class="btn sm">Coba lagi</button>
+          <a href="${esc(data.manual_url || OFFICIAL)}" target="_blank" rel="noopener" class="btn sm line">Cek manual ↗</a>
+        </div></div>`;
+      return;
+    }
+    if (!resp.ok || data.error) {
+      searchResults.innerHTML = `<div class="notice red"><strong>${esc(data.error || 'Pencarian gagal.')}</strong></div>`;
+      return;
+    }
+    setSource(true);
+    renderSearchResults(data);
+  } catch (err) {
+    searchResults.innerHTML = '<div class="notice red"><strong>Gagal terhubung ke server.</strong></div>';
+  } finally {
+    searchBtn.disabled = false;
+    searchBtn.textContent = 'Cari';
+  }
+});
 
-        function selectFile(file) {
-            if (!file.name.toLowerCase().endsWith('.xlsx')) { alert('File harus berformat .xlsx.'); return; }
-            selectedFile = file;
-            $('file-name').textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-            fileInfo.classList.remove('hidden');
-            btnUpload.classList.remove('hidden');
-            $('upload-warning').classList.toggle('hidden', !sourceDown);
-        }
+searchResults.addEventListener('click', (e) => {
+  if (e.target.closest('[data-retry]')) { searchForm.requestSubmit(); return; }
+  const row = e.target.closest('[data-i]');
+  if (row) showDetail(lastResults[+row.dataset.i]);
+});
 
-        function resetUpload() {
-            selectedFile = null;
-            fileInput.value = '';
-            fileInfo.classList.add('hidden');
-            btnUpload.classList.add('hidden');
-            $('upload-warning').classList.add('hidden');
-        }
-        $('btn-remove').addEventListener('click', resetUpload);
+function renderSearchResults(data) {
+  const results = data.results || [];
+  lastResults = results;
+  if (!results.length) {
+    searchResults.innerHTML = '<div class="note">Tidak ditemukan di PDDIKTI.</div>';
+    return;
+  }
+  const more = data.total > results.length ? ` (${results.length} teratas ditampilkan)` : '';
+  searchResults.innerHTML = `<div class="results">
+    <div class="rhead"><span>Nama</span><span>NIM</span><span>Perguruan tinggi</span><span>Prodi</span><span></span></div>
+    ${results.map((r, i) => `<button type="button" class="rrow" data-i="${i}" aria-label="Detail ${esc(r.nama)}">
+      <span class="nm">${esc(r.nama || '-')}</span>
+      <span class="nim">${esc(r.nim || '-')}</span>
+      <span class="pt">${esc(r.nama_pt || '-')}</span>
+      <span class="pr">${esc(r.nama_prodi || '-')}</span>
+      <span class="go" aria-hidden="true">→</span>
+    </button>`).join('')}
+    <p class="rcount">${data.total} hasil${more}</p></div>`;
+}
 
-        btnUpload.addEventListener('click', async () => {
-            if (!selectedFile) return;
-            btnUpload.disabled = true;
-            btnUpload.textContent = 'Mengupload...';
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-            try {
-                const resp = await fetch('/upload', { method: 'POST', body: formData });
-                const data = await resp.json().catch(() => ({}));
-                if (!resp.ok || data.error) { alert(data.error || 'Upload gagal.'); return; }
-                startProgress(data.job_id, selectedFile.name);
-            } catch (err) {
-                alert('Upload gagal. Periksa koneksi, lalu coba lagi.');
-            } finally {
-                btnUpload.disabled = false;
-                btnUpload.textContent = 'Mulai proses';
-            }
-        });
+// ---------- Detail ----------
+function closeModal() { const m = $('detail-modal'); if (m) m.remove(); }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-        // ============================================================
-        // PROGRESS (polling)
-        // ============================================================
-        function logColor(s) {
-            if (s.startsWith('Gagal cek') || s.startsWith('Tidak ditemukan')) return 'text-neutral-900 font-medium';
-            if (s === 'Mencari...' || s.startsWith('Dilewati') || s.startsWith('Duplikat')) return 'text-neutral-400';
-            return 'text-neutral-600';
-        }
-        function addLog(text, cls) {
-            const el = document.createElement('p');
-            el.className = cls;
-            el.textContent = text;
-            logContainer.appendChild(el);
-        }
-        function setBadge(text, dark) {
-            progressStatus.textContent = text;
-            progressStatus.className = 'status-badge ' + (dark ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-700');
-        }
+async function showDetail(r) {
+  if (!r || !r.id) return;
+  closeModal();
+  const modal = document.createElement('div');
+  modal.id = 'detail-modal';
+  modal.className = 'modal';
+  modal.innerHTML = `<div class="panel" role="dialog" aria-modal="true" aria-label="Detail Mahasiswa">
+    <div class="note"><span class="spinner"></span><br>Memuat detail...</div></div>`;
+  modal.addEventListener('click', (e) => { if (e.target === modal || e.target.closest('[data-close]')) closeModal(); });
+  document.body.appendChild(modal);
+  const panel = modal.firstElementChild;
+  const closeBtn = '<button type="button" data-close class="btn line full" style="margin-top:20px">Tutup</button>';
 
-        function startProgress(jobId, filename) {
-            uploadSection.classList.add('hidden');
-            progressSection.classList.remove('hidden');
-            downloadSection.classList.add('hidden');
-            logContainer.innerHTML = '';
-            progressBar.style.width = '0%';
-            progressPercent.textContent = '0%';
-            setBadge('Memproses', false);
-            let since = 0, failures = 0;
+  try {
+    const resp = await fetch(`/detail?id=${encodeURIComponent(r.id)}`);
+    const d = await resp.json().catch(() => ({}));
+    if (!resp.ok || d.error) {
+      const limited = d.code === 'SOURCE_UNAVAILABLE';
+      if (limited) setSource(false, d);
+      panel.innerHTML = `<div class="notice ${limited ? 'amber' : 'red'}" style="margin-top:0"><strong>${esc(limited ? 'API PDDIKTI sedang dibatasi.' : (d.error || 'Detail tidak ditemukan.'))}</strong></div>${closeBtn}`;
+      return;
+    }
+    const jk = d.jenis_kelamin === 'L' ? 'Laki-laki' : d.jenis_kelamin === 'P' ? 'Perempuan' : d.jenis_kelamin;
+    const rows = [
+      ['Jenis kelamin', jk], ['Perguruan tinggi', d.nama_pt], ['Program studi', d.prodi],
+      ['Jenjang', d.jenjang], ['Tahun masuk', d.tahun_masuk], ['Semester awal', d.semester_awal],
+    ].filter(([, v]) => v);
+    panel.innerHTML = `
+      <div class="panel-head">
+        <h3>Detail Mahasiswa</h3>
+        <button type="button" data-close class="x" aria-label="Tutup">×</button>
+      </div>
+      <div class="who"><b>${esc(d.nama || r.nama)}</b><span>${esc(d.nim || r.nim)}</span></div>
+      <span class="badge ${statusTone(d.status_saat_ini)}">${esc(d.status_saat_ini || 'Status tidak tersedia')}</span>
+      <dl class="dl">${rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(String(v))}</dd></div>`).join('')}</dl>
+      ${closeBtn}`;
+  } catch (err) {
+    panel.innerHTML = `<div class="notice red" style="margin-top:0"><strong>Gagal terhubung ke server.</strong></div>${closeBtn}`;
+  }
+}
 
-            const tick = async () => {
-                try {
-                    const resp = await fetch(`/progress/${jobId}?since=${since}`);
-                    const data = await resp.json();
-                    if (!resp.ok) return finishError(data.error || 'Proses tidak ditemukan.');
-                    failures = 0;
-                    since = data.seq || since;
-                    if (data.total > 0) {
-                        const pct = Math.round((data.current / data.total) * 100);
-                        progressBar.style.width = pct + '%';
-                        progressText.textContent = `${data.current} / ${data.total}`;
-                        progressPercent.textContent = pct + '%';
-                    }
-                    (data.logs || []).forEach(log => {
-                        if (log.status === 'Mencari...') return;
-                        addLog(`[${log.index}/${log.total}] ${log.nama} — ${log.status}`, logColor(log.status));
-                    });
-                    if (data.logs && data.logs.length) logContainer.scrollTop = logContainer.scrollHeight;
-                    if (data.status === 'done') return finishDone(jobId, filename, data.summary);
-                    if (data.status === 'error') return finishError(data.error);
-                    setTimeout(tick, 1000);
-                } catch {
-                    if (++failures > 8) return finishError('Koneksi ke server terputus.');
-                    setTimeout(tick, 2000);
-                }
-            };
-            tick();
-        }
+// ---------- Upload ----------
+const dropZone = $('drop-zone'), fileInput = $('file-input'), fileInfo = $('file-info');
+const btnUpload = $('btn-upload'), uploadSection = $('upload-section'), progressSection = $('progress-section');
+const progressBar = $('progress-bar'), progressText = $('progress-text'), progressPercent = $('progress-percent');
+const progressStatus = $('progress-status'), logContainer = $('log-container'), downloadSection = $('download-section');
+const summaryBox = $('summary-box'), historyContainer = $('history-container');
 
-        function finishError(msg) {
-            setBadge('Gagal', true);
-            addLog('Gagal: ' + msg, 'text-neutral-900 font-medium');
-        }
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('over');
+  if (e.dataTransfer.files.length) selectFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files.length) selectFile(fileInput.files[0]); });
 
-        function finishDone(jobId, filename, s) {
-            if (!s.aborted) {
-                progressBar.style.width = '100%';
-                progressPercent.textContent = '100%';
-            }
-            setBadge(s.aborted ? 'Berhenti' : 'Selesai', true);
-            const abortBox = $('abort-box');
-            if (s.aborted) {
-                setSource(false, { reason: s.aborted });
-                abortBox.textContent = `Proses berhenti karena API dibatasi. Sebanyak ${s.unchecked} baris belum dicek.`;
-                abortBox.classList.remove('hidden');
-            } else {
-                abortBox.classList.add('hidden');
-            }
-            const box = (v, k) => `<div class="bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-center">
-                <p class="text-2xl font-semibold tracking-tight">${v ?? 0}</p>
-                <p class="text-xs text-neutral-500">${k}</p></div>`;
-            summaryBox.innerHTML = box(s.total, 'Total') + box(s.found, 'Ditemukan') +
-                box(s.not_found, 'Tidak ditemukan') + box(s.no_match, 'Tidak cocok');
-            $('btn-download').href = `/download/${jobId}`;
-            downloadSection.classList.remove('hidden');
-            saveHistory(jobId, filename, s);
-            loadHistory();
-        }
+function selectFile(file) {
+  if (!file.name.toLowerCase().endsWith('.xlsx')) { alert('File harus berformat .xlsx.'); return; }
+  selectedFile = file;
+  $('file-name').textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+  fileInfo.classList.remove('hidden');
+  btnUpload.classList.remove('hidden');
+  $('upload-warning').classList.toggle('hidden', !sourceDown);
+}
 
-        $('btn-new').addEventListener('click', () => {
-            resetUpload();
-            progressSection.classList.add('hidden');
-            uploadSection.classList.remove('hidden');
-        });
+function resetUpload() {
+  selectedFile = null;
+  fileInput.value = '';
+  fileInfo.classList.add('hidden');
+  btnUpload.classList.add('hidden');
+  $('upload-warning').classList.add('hidden');
+}
+$('btn-remove').addEventListener('click', resetUpload);
 
-        // ============================================================
-        // HISTORY (localStorage per-user)
-        // ============================================================
-        function readHistory() {
-            try { const v = JSON.parse(localStorage.getItem('pddikti_history') || '[]'); return Array.isArray(v) ? v : []; }
-            catch { return []; }
-        }
-        function saveHistory(jobId, filename, summary) {
-            try {
-                const history = readHistory();
-                history.unshift({
-                    job_id: jobId,
-                    filename: filename,
-                    date: new Date().toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-                    total: summary.total,
-                    found: summary.found,
-                    not_found: summary.not_found,
-                });
-                localStorage.setItem('pddikti_history', JSON.stringify(history.slice(0, 20)));
-            } catch {}
-        }
-        function loadHistory() {
-            const data = readHistory();
-            if (!data.length) {
-                historyContainer.innerHTML = '<p class="text-neutral-400 text-sm text-center py-6">Belum ada riwayat proses.</p>';
-                return;
-            }
-            historyContainer.innerHTML = `
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="border-b border-neutral-200 text-left text-neutral-400 text-xs uppercase tracking-wider">
-                                <th class="py-2.5 pr-4 font-medium">File</th>
-                                <th class="py-2.5 pr-4 font-medium">Tanggal</th>
-                                <th class="py-2.5 pr-4 font-medium text-center">Total</th>
-                                <th class="py-2.5 pr-4 font-medium text-center">Ditemukan</th>
-                                <th class="py-2.5 pr-4 font-medium text-center">Tidak ditemukan</th>
-                                <th class="py-2.5"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.map(h => `
-                                <tr class="border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
-                                    <td class="py-3 pr-4 font-medium max-w-[200px] truncate">${esc(h.filename)}</td>
-                                    <td class="py-3 pr-4 text-neutral-400 whitespace-nowrap">${esc(h.date)}</td>
-                                    <td class="py-3 pr-4 text-center font-mono">${esc(h.total)}</td>
-                                    <td class="py-3 pr-4 text-center font-mono">${esc(h.found)}</td>
-                                    <td class="py-3 pr-4 text-center font-mono">${esc(h.not_found)}</td>
-                                    <td class="py-3 text-right">
-                                        <a href="/download/${encodeURIComponent(h.job_id)}" class="inline-flex items-center gap-1 text-neutral-700 hover:text-neutral-900 font-medium text-xs border border-neutral-200 hover:bg-neutral-100 px-2.5 py-1 rounded-lg transition-all">Download</a>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        }
-        loadHistory();
+btnUpload.addEventListener('click', async () => {
+  if (!selectedFile) return;
+  btnUpload.disabled = true;
+  btnUpload.textContent = 'Mengupload...';
+  const formData = new FormData();
+  formData.append('file', selectedFile);
+  try {
+    const resp = await fetch('/upload', { method: 'POST', body: formData });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok || data.error) { alert(data.error || 'Upload gagal.'); return; }
+    startProgress(data.job_id, selectedFile.name);
+  } catch (err) {
+    alert('Upload gagal. Periksa koneksi, lalu coba lagi.');
+  } finally {
+    btnUpload.disabled = false;
+    btnUpload.textContent = 'Mulai proses';
+  }
+});
 
-        // ============================================================
-        // QUICK SEARCH
-        // ============================================================
-        const searchForm = $('search-form'), searchInput = $('search-input');
-        const searchBtn = $('search-btn'), searchResults = $('search-results');
-        let lastResults = [];
+// ---------- Proses ----------
+function logClass(s) {
+  if (s.startsWith('Gagal cek') || s.startsWith('Tidak ditemukan')) return 'red';
+  if (/tidak cocok|^Cocok/i.test(s)) return 'amber';
+  if (s.startsWith('Dilewati') || s.startsWith('Duplikat')) return 'dim';
+  return 'green';
+}
+function addLog(text, cls) {
+  const el = document.createElement('p');
+  if (cls) el.className = cls;
+  el.textContent = text;
+  logContainer.appendChild(el);
+}
+function setBadge(text, tone) {
+  progressStatus.textContent = text;
+  progressStatus.className = 'badge ' + tone;
+}
 
-        searchForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const q = searchInput.value.trim();
-            if (q.length < 3) return;
-            searchBtn.disabled = true;
-            searchBtn.textContent = 'Mencari...';
-            searchResults.innerHTML = '<div class="text-center py-6"><div class="inline-block w-5 h-5 border-2 border-neutral-200 border-t-neutral-900 rounded-full animate-spin"></div><p class="text-xs text-neutral-400 mt-2">Mencari di PDDIKTI...</p></div>';
-            try {
-                const resp = await fetch(`/search?q=${encodeURIComponent(q)}`);
-                const data = await resp.json().catch(() => ({}));
-                if (data.code === 'SOURCE_UNAVAILABLE') {
-                    setSource(false, data);
-                    const wait = data.retry_after ? ` Coba lagi dalam ±${mnt(data.retry_after)} menit.` : '';
-                    searchResults.innerHTML = `<div class="text-center py-5 fade-in">
-                        <p class="text-sm font-medium">API PDDIKTI sedang dibatasi.${esc(wait)}</p>
-                        <p class="text-xs text-neutral-500 mt-1">Hasil belum bisa dipastikan.</p>
-                        <div class="flex justify-center gap-2 mt-3">
-                            <button type="button" data-retry class="btn-dark text-xs font-medium px-3 py-1.5 rounded-lg">Coba lagi</button>
-                            <a href="${esc(data.manual_url || OFFICIAL)}" target="_blank" rel="noopener" class="text-xs font-medium border border-neutral-300 hover:bg-neutral-100 px-3 py-1.5 rounded-lg">Cek manual ↗</a>
-                        </div></div>`;
-                    return;
-                }
-                if (!resp.ok || data.error) {
-                    searchResults.innerHTML = `<p class="text-sm text-neutral-900 text-center py-4">${esc(data.error || 'Pencarian gagal.')}</p>`;
-                    return;
-                }
-                setSource(true);
-                renderSearchResults(data);
-            } catch (err) {
-                searchResults.innerHTML = '<p class="text-sm text-neutral-900 text-center py-4">Gagal terhubung ke server.</p>';
-            } finally {
-                searchBtn.disabled = false;
-                searchBtn.textContent = 'Cari';
-            }
-        });
+function startProgress(jobId, filename) {
+  uploadSection.classList.add('hidden');
+  progressSection.classList.remove('hidden');
+  downloadSection.classList.add('hidden');
+  logContainer.innerHTML = '';
+  progressBar.style.width = '0%';
+  progressPercent.textContent = '0%';
+  setBadge('Memproses', 'gray');
+  let since = 0, failures = 0;
 
-        searchResults.addEventListener('click', (e) => {
-            if (e.target.closest('[data-retry]')) { searchForm.requestSubmit(); return; }
-            const b = e.target.closest('[data-i]');
-            if (b) showDetail(lastResults[+b.dataset.i]);
-        });
+  const tick = async () => {
+    try {
+      const resp = await fetch(`/progress/${jobId}?since=${since}`);
+      const data = await resp.json();
+      if (!resp.ok) return finishError(data.error || 'Proses tidak ditemukan.');
+      failures = 0;
+      since = data.seq || since;
+      if (data.total > 0) {
+        const pct = Math.round((data.current / data.total) * 100);
+        progressBar.style.width = pct + '%';
+        progressText.textContent = `${data.current} / ${data.total}`;
+        progressPercent.textContent = pct + '%';
+      }
+      (data.logs || []).forEach(log => {
+        if (log.status === 'Mencari...') return;
+        addLog(`[${log.index}/${log.total}] ${log.nama} — ${log.status}`, logClass(log.status));
+      });
+      if (data.logs && data.logs.length) logContainer.scrollTop = logContainer.scrollHeight;
+      if (data.status === 'done') return finishDone(jobId, filename, data.summary);
+      if (data.status === 'error') return finishError(data.error);
+      setTimeout(tick, 1000);
+    } catch {
+      if (++failures > 8) return finishError('Koneksi ke server terputus.');
+      setTimeout(tick, 2000);
+    }
+  };
+  tick();
+}
 
-        function renderSearchResults(data) {
-            const results = data.results || [];
-            lastResults = results;
-            if (!results.length) {
-                searchResults.innerHTML = '<p class="text-sm text-neutral-400 text-center py-4">Tidak ditemukan di PDDIKTI.</p>';
-                return;
-            }
-            let html = `<div class="overflow-x-auto rounded-xl border border-neutral-200 fade-in"><table class="w-full text-sm">
-                <thead><tr class="bg-neutral-50 text-neutral-400 text-xs uppercase tracking-wider">
-                    <th class="py-2.5 px-3 text-left font-medium">Nama</th>
-                    <th class="py-2.5 px-3 text-left font-medium">NIM</th>
-                    <th class="py-2.5 px-3 text-left font-medium">Perguruan tinggi</th>
-                    <th class="py-2.5 px-3 text-left font-medium">Prodi</th>
-                    <th class="py-2.5 px-3"></th>
-                </tr></thead><tbody>`;
-            results.forEach((r, i) => {
-                html += `<tr class="border-t border-neutral-100 hover:bg-neutral-50">
-                    <td class="py-2.5 px-3 font-medium">${esc(r.nama || '-')}</td>
-                    <td class="py-2.5 px-3 text-neutral-500 font-mono text-xs">${esc(r.nim || '-')}</td>
-                    <td class="py-2.5 px-3 text-neutral-600 text-xs max-w-[200px]">${esc(r.nama_pt || '-')}</td>
-                    <td class="py-2.5 px-3 text-neutral-500 text-xs max-w-[180px]">${esc(r.nama_prodi || '-')}</td>
-                    <td class="py-2.5 px-3 text-right"><button type="button" data-i="${i}" class="text-xs font-medium border border-neutral-200 hover:border-neutral-900 hover:bg-neutral-100 px-2.5 py-1 rounded-lg">Detail</button></td>
-                </tr>`;
-            });
-            const more = data.total > results.length ? ` (${results.length} teratas ditampilkan)` : '';
-            html += `</tbody></table></div>
-                <p class="text-xs text-neutral-400 mt-2">${data.total} hasil${more}</p>`;
-            searchResults.innerHTML = html;
-        }
+function finishError(msg) {
+  setBadge('Gagal', 'red');
+  addLog('Gagal: ' + msg, 'red');
+}
 
-        // ============================================================
-        // DETAIL MODAL
-        // ============================================================
-        function closeModal() { const m = $('detail-modal'); if (m) m.remove(); }
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-        const closeBtn = '<button type="button" data-close class="mt-4 w-full border border-neutral-300 hover:bg-neutral-100 font-medium py-2.5 rounded-xl text-sm">Tutup</button>';
+function finishDone(jobId, filename, s) {
+  if (!s.aborted) {
+    progressBar.style.width = '100%';
+    progressPercent.textContent = '100%';
+  }
+  setBadge(s.aborted ? 'Berhenti' : 'Selesai', s.aborted ? 'amber' : 'green');
+  const abortBox = $('abort-box');
+  if (s.aborted) {
+    setSource(false, { reason: s.aborted });
+    abortBox.innerHTML = `<strong>Proses berhenti karena API dibatasi.</strong><p>Sebanyak ${esc(s.unchecked)} baris belum dicek.</p>`;
+    abortBox.classList.remove('hidden');
+  } else {
+    abortBox.classList.add('hidden');
+  }
+  const stat = (v, k, tone) => `<div class="${tone}"><b>${v ?? 0}</b><span><i></i>${k}</span></div>`;
+  summaryBox.innerHTML = stat(s.total, 'Total', 'gray') + stat(s.found, 'Ditemukan', 'green') +
+    stat(s.not_found, 'Tidak ditemukan', 'red') + stat(s.no_match, 'Tidak cocok', 'amber');
+  $('btn-download').href = `/download/${jobId}`;
+  downloadSection.classList.remove('hidden');
+  saveHistory(jobId, filename, s);
+  loadHistory();
+}
 
-        async function showDetail(r) {
-            if (!r || !r.id) return;
-            closeModal();
-            const modal = document.createElement('div');
-            modal.id = 'detail-modal';
-            modal.className = 'fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 fade-in';
-            modal.innerHTML = `<div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-neutral-200">
-                <div class="text-center py-6">
-                    <div class="inline-block w-6 h-6 border-2 border-neutral-200 border-t-neutral-900 rounded-full animate-spin"></div>
-                    <p class="text-sm text-neutral-400 mt-2">Memuat detail...</p>
-                </div></div>`;
-            modal.addEventListener('click', (e) => { if (e.target === modal || e.target.closest('[data-close]')) closeModal(); });
-            document.body.appendChild(modal);
-            const panel = modal.firstElementChild;
+$('btn-new').addEventListener('click', () => {
+  resetUpload();
+  progressSection.classList.add('hidden');
+  uploadSection.classList.remove('hidden');
+});
 
-            try {
-                const resp = await fetch(`/detail?id=${encodeURIComponent(r.id)}`);
-                const d = await resp.json().catch(() => ({}));
-                if (!resp.ok || d.error) {
-                    if (d.code === 'SOURCE_UNAVAILABLE') setSource(false, d);
-                    panel.innerHTML = `<p class="text-sm text-center py-4">${esc(d.code === 'SOURCE_UNAVAILABLE' ? 'API PDDIKTI sedang dibatasi.' : (d.error || 'Detail tidak ditemukan.'))}</p>${closeBtn}`;
-                    return;
-                }
-                const st = (d.status_saat_ini || '').toLowerCase();
-                const badge = st.includes('aktif') && !st.includes('non') ? 'bg-neutral-900 text-white' : 'border border-neutral-900 text-neutral-900';
-                const jk = d.jenis_kelamin === 'L' ? 'Laki-laki' : d.jenis_kelamin === 'P' ? 'Perempuan' : d.jenis_kelamin;
-                panel.innerHTML = `
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold">Detail Mahasiswa</h3>
-                        <button type="button" data-close class="text-neutral-400 hover:text-neutral-900" aria-label="Tutup">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                        </button>
-                    </div>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="text-xs font-semibold px-3 py-1 rounded-full ${badge}">${esc(d.status_saat_ini || '-')}</span>
-                            <span class="text-xs text-neutral-400">${esc(d.jenjang || '')}</span>
-                        </div>
-                        ${detailRow('Nama', d.nama)}
-                        ${detailRow('NIM', d.nim)}
-                        ${detailRow('Jenis kelamin', jk)}
-                        ${detailRow('Perguruan tinggi', d.nama_pt)}
-                        ${detailRow('Program studi', d.prodi)}
-                        ${detailRow('Jenjang', d.jenjang)}
-                        ${detailRow('Tahun masuk', d.tahun_masuk)}
-                        ${detailRow('Semester awal', d.semester_awal)}
-                    </div>
-                    ${closeBtn}`;
-            } catch (err) {
-                panel.innerHTML = `<p class="text-sm text-center py-4">Gagal terhubung ke server.</p>${closeBtn}`;
-            }
-        }
-
-        function detailRow(label, value) {
-            if (!value) return '';
-            return `<div class="flex justify-between gap-4 py-1.5 border-b border-neutral-100">
-                <span class="text-neutral-400 text-xs">${esc(label)}</span>
-                <span class="font-medium text-xs text-right max-w-[60%]">${esc(String(value))}</span>
-            </div>`;
-        }
-    </script>
+// ---------- Riwayat ----------
+function readHistory() {
+  try { const v = JSON.parse(localStorage.getItem('pddikti_history') || '[]'); return Array.isArray(v) ? v : []; }
+  catch { return []; }
+}
+function saveHistory(jobId, filename, summary) {
+  try {
+    const history = readHistory();
+    history.unshift({
+      job_id: jobId,
+      filename: filename,
+      date: new Date().toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      total: summary.total,
+      found: summary.found,
+      not_found: summary.not_found,
+    });
+    localStorage.setItem('pddikti_history', JSON.stringify(history.slice(0, 20)));
+  } catch {}
+}
+function loadHistory() {
+  const data = readHistory();
+  if (!data.length) {
+    historyContainer.innerHTML = '<p class="empty">Belum ada riwayat proses.</p>';
+    return;
+  }
+  historyContainer.innerHTML = `<table class="hist">
+    <thead><tr><th>File</th><th>Tanggal</th><th class="n">Total</th><th class="n">Ditemukan</th><th class="n">Tidak ditemukan</th><th></th></tr></thead>
+    <tbody>${data.map(h => `<tr>
+      <td class="f" title="${esc(h.filename)}">${esc(h.filename)}</td>
+      <td class="d">${esc(h.date)}</td>
+      <td class="n">${esc(h.total)}</td>
+      <td class="n green">${esc(h.found)}</td>
+      <td class="n red">${esc(h.not_found)}</td>
+      <td class="r"><a href="/download/${encodeURIComponent(h.job_id)}">Download</a></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+loadHistory();
+</script>
 </body>
 </html>
